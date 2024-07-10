@@ -1,30 +1,47 @@
 import paper from '@scratch/paper';
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes';
-import ColorStyleProptype from '../lib/color-style-proptype';
-import {clearSelection} from '../helper/selection';
-import {endPointHit, touching} from '../helper/snapping';
-import {drawHitPoint, removeHitPoint} from '../helper/guides';
-import {styleShape, MIXED} from '../helper/style-path';
-import {changeStrokeColor, clearStrokeGradient} from '../reducers/stroke-style';
-import {changeStrokeWidth} from '../reducers/stroke-width';
-import {changeMode} from '../reducers/modes';
-import {clearSelectedItems} from '../reducers/selected-items';
-import {snapDeltaToAngle} from '../helper/math';
+import Modes from '../lib/modes.js';
+import ColorStyleProptype from '../lib/color-style-proptype.js';
+import {clearSelection} from '../helper/selection.js';
+import {endPointHit, touching} from '../helper/snapping.js';
+import {drawHitPoint, removeHitPoint} from '../helper/guides.js';
+import {styleShape, MIXED} from '../helper/style-path.js';
+import {changeStrokeColor, clearStrokeGradient} from '../reducers/stroke-style.js';
+import {changeStrokeWidth} from '../reducers/stroke-width.js';
+import {changeMode} from '../reducers/modes.js';
+import {clearSelectedItems} from '../reducers/selected-items.js';
+import {snapDeltaToAngle} from '../helper/math.js';
 
 import LineModeComponent from '../components/line-mode/line-mode.jsx';
 
-class LineMode extends React.Component {
+interface LineModeProps {
+    clearSelectedItems: () => void;
+    clearStrokeGradient: () => void;
+    colorState: {
+        fillColor: any; // TODO: ColorStyleProptype
+        strokeColor: any; // TODO: ColorStyleProptype
+        strokeWidth: number; // TODO: Original propType was `PropTypes.number` which is optional
+    };
+    handleMouseDown: () => void;
+    isLineModeActive: boolean;
+    onChangeStrokeColor: (strokeColor: string) => void;
+    onChangeStrokeWidth: (strokeWidth: number) => void;
+    onUpdateImage: () => void;
+}
+
+class LineMode extends React.Component<LineModeProps> {
+    tool: paper.Tool;
+    active: boolean;
+    
     static get SNAP_TOLERANCE () {
         return 6;
     }
     static get DEFAULT_COLOR () {
         return '#000000';
     }
-    constructor (props) {
+    constructor (props: LineModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -41,14 +58,14 @@ class LineMode extends React.Component {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: LineModeProps) {
         if (nextProps.isLineModeActive && !this.props.isLineModeActive) {
             this.activateTool();
         } else if (!nextProps.isLineModeActive && this.props.isLineModeActive) {
             this.deactivateTool();
         }
     }
-    shouldComponentUpdate (nextProps) {
+    shouldComponentUpdate (nextProps: LineModeProps) {
         return nextProps.isLineModeActive !== this.props.isLineModeActive;
     }
     componentWillUnmount () {
@@ -276,21 +293,6 @@ class LineMode extends React.Component {
         );
     }
 }
-
-LineMode.propTypes = {
-    clearSelectedItems: PropTypes.func.isRequired,
-    clearStrokeGradient: PropTypes.func.isRequired,
-    colorState: PropTypes.shape({
-        fillColor: ColorStyleProptype,
-        strokeColor: ColorStyleProptype,
-        strokeWidth: PropTypes.number
-    }).isRequired,
-    handleMouseDown: PropTypes.func.isRequired,
-    isLineModeActive: PropTypes.bool.isRequired,
-    onChangeStrokeColor: PropTypes.func.isRequired,
-    onChangeStrokeWidth: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     colorState: state.scratchPaint.color,

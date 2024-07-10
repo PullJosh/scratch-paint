@@ -2,7 +2,6 @@ import bindAll from 'lodash.bindall';
 import {connect} from 'react-redux';
 import paper from '@scratch/paper';
 import parseColor from 'parse-color';
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import {changeColorIndex} from '../reducers/color-index';
@@ -14,7 +13,7 @@ import ColorPickerComponent from '../components/color-picker/color-picker.jsx';
 import {MIXED} from '../helper/style-path';
 import Modes from '../lib/modes';
 
-const colorStringToHsv = hexString => {
+const colorStringToHsv = (hexString: string) => {
     const hsv = parseColor(hexString).hsv;
     // Hue comes out in [0, 360], limit to [0, 100]
     hsv[0] = hsv[0] / 3.6;
@@ -26,16 +25,39 @@ const colorStringToHsv = hexString => {
     return hsv;
 };
 
-const hsvToHex = (h, s, v) =>
+const hsvToHex = (h: number, s: number, v: number) =>
     // Scale hue back up to [0, 360] from [0, 100]
     parseColor(`hsv(${3.6 * h}, ${s}, ${v})`).hex
 ;
 
+interface ColorPickerProps {
+    color?: string;
+    color2?: string;
+    colorIndex: number;
+    gradientType: keyof typeof GradientTypes;
+    isEyeDropping: boolean;
+    mode?: keyof typeof Modes;
+    onActivateEyeDropper: (currentTool: any, callback: any) => void;
+    onChangeColor: (color: string) => void;
+    onChangeGradientType?: (gradientType: keyof typeof GradientTypes) => void;
+    onSelectColor: () => void;
+    onSelectColor2: () => void;
+    onSwap?: () => void;
+    rtl: boolean;
+    shouldShowGradientTools: boolean;
+}
+
+interface ColorPickerState {
+    hue: number;
+    saturation: number;
+    brightness: number;
+}
+
 // Important! This component ignores new color props except when isEyeDropping
 // This is to make the HSV <=> RGB conversion stable. The sliders manage their
 // own changes until unmounted or color changes with props.isEyeDropping = true.
-class ColorPicker extends React.Component {
-    constructor (props) {
+class ColorPicker extends React.Component<ColorPickerProps, ColorPickerState> {
+    constructor (props: ColorPickerProps) {
         super(props);
         bindAll(this, [
             'getHsv',
@@ -58,7 +80,7 @@ class ColorPicker extends React.Component {
             brightness: hsv[2]
         };
     }
-    componentWillReceiveProps (newProps) {
+    componentWillReceiveProps (newProps: ColorPickerProps) {
         const color = newProps.colorIndex === 0 ? this.props.color : this.props.color2;
         const newColor = newProps.colorIndex === 0 ? newProps.color : newProps.color2;
         const colorSetByEyedropper = this.props.isEyeDropping && color !== newColor;
@@ -71,23 +93,23 @@ class ColorPicker extends React.Component {
             });
         }
     }
-    getHsv (color) {
+    getHsv (color: string) {
         const isTransparent = color === null;
         const isMixed = color === MIXED;
         return isTransparent || isMixed ?
             [50, 100, 100] : colorStringToHsv(color);
     }
-    handleHueChange (hue) {
+    handleHueChange (hue: number) {
         this.setState({hue: hue}, () => {
             this.handleColorChange();
         });
     }
-    handleSaturationChange (saturation) {
+    handleSaturationChange (saturation: number) {
         this.setState({saturation: saturation}, () => {
             this.handleColorChange();
         });
     }
-    handleBrightnessChange (brightness) {
+    handleBrightnessChange (brightness: number) {
         this.setState({brightness: brightness}, () => {
             this.handleColorChange();
         });
@@ -150,23 +172,6 @@ class ColorPicker extends React.Component {
         );
     }
 }
-
-ColorPicker.propTypes = {
-    color: PropTypes.string,
-    color2: PropTypes.string,
-    colorIndex: PropTypes.number.isRequired,
-    gradientType: PropTypes.oneOf(Object.keys(GradientTypes)).isRequired,
-    isEyeDropping: PropTypes.bool.isRequired,
-    mode: PropTypes.oneOf(Object.keys(Modes)),
-    onActivateEyeDropper: PropTypes.func.isRequired,
-    onChangeColor: PropTypes.func.isRequired,
-    onChangeGradientType: PropTypes.func,
-    onSelectColor: PropTypes.func.isRequired,
-    onSelectColor2: PropTypes.func.isRequired,
-    onSwap: PropTypes.func,
-    rtl: PropTypes.bool.isRequired,
-    shouldShowGradientTools: PropTypes.bool.isRequired
-};
 
 const mapStateToProps = state => ({
     colorIndex: state.scratchPaint.fillMode.colorIndex,

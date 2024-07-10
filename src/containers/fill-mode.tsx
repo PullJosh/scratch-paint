@@ -1,23 +1,40 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes';
-import GradientTypes from '../lib/gradient-types';
-import FillTool from '../helper/tools/fill-tool';
-import {generateSecondaryColor, MIXED} from '../helper/style-path';
+import Modes from '../lib/modes.js';
+import GradientTypes from '../lib/gradient-types.js';
+import FillTool from '../helper/tools/fill-tool.js';
+import {generateSecondaryColor, MIXED} from '../helper/style-path.js';
 
-import {changeFillColor, changeFillColor2, DEFAULT_COLOR} from '../reducers/fill-style';
-import {changeMode} from '../reducers/modes';
-import {clearSelectedItems} from '../reducers/selected-items';
-import {clearSelection} from '../helper/selection';
-import {clearHoveredItem, setHoveredItem} from '../reducers/hover';
-import {changeGradientType} from '../reducers/fill-mode-gradient-type';
+import {changeFillColor, changeFillColor2, DEFAULT_COLOR} from '../reducers/fill-style.js';
+import {changeMode} from '../reducers/modes.js';
+import {clearSelectedItems} from '../reducers/selected-items.js';
+import {clearSelection} from '../helper/selection.js';
+import {clearHoveredItem, setHoveredItem} from '../reducers/hover.js';
+import {changeGradientType} from '../reducers/fill-mode-gradient-type.js';
 
 import FillModeComponent from '../components/fill-mode/fill-mode.jsx';
 
-class FillMode extends React.Component {
-    constructor (props) {
+interface FillModeProps {
+    changeGradientType: (gradientType: keyof typeof GradientTypes) => void;
+    clearHoveredItem: () => void;
+    clearSelectedItems: () => void;
+    fillColor?: string;
+    fillColor2?: string;
+    fillStyleGradientType: keyof typeof GradientTypes;
+    fillModeGradientType?: keyof typeof GradientTypes;
+    handleMouseDown: () => void;
+    hoveredItemId?: number;
+    isFillModeActive: boolean;
+    onChangeFillColor: (fillColor: string, index: number) => void;
+    onUpdateImage: () => void;
+    setHoveredItem: (hoveredItemId: number) => void;
+}
+
+class FillMode extends React.Component<FillModeProps> {
+    tool: FillTool;
+    
+    constructor (props: FillModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -26,10 +43,10 @@ class FillMode extends React.Component {
     }
     componentDidMount () {
         if (this.props.isFillModeActive) {
-            this.activateTool(this.props);
+            this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: FillModeProps) {
         if (this.tool) {
             if (nextProps.fillColor !== this.props.fillColor) {
                 this.tool.setFillColor(nextProps.fillColor);
@@ -51,7 +68,7 @@ class FillMode extends React.Component {
             this.deactivateTool();
         }
     }
-    shouldComponentUpdate (nextProps) {
+    shouldComponentUpdate (nextProps: FillModeProps) {
         return nextProps.isFillModeActive !== this.props.isFillModeActive;
     }
     componentWillUnmount () {
@@ -107,22 +124,6 @@ class FillMode extends React.Component {
         );
     }
 }
-
-FillMode.propTypes = {
-    changeGradientType: PropTypes.func.isRequired,
-    clearHoveredItem: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    fillColor: PropTypes.string,
-    fillColor2: PropTypes.string,
-    fillStyleGradientType: PropTypes.oneOf(Object.keys(GradientTypes)).isRequired,
-    fillModeGradientType: PropTypes.oneOf(Object.keys(GradientTypes)),
-    handleMouseDown: PropTypes.func.isRequired,
-    hoveredItemId: PropTypes.number,
-    isFillModeActive: PropTypes.bool.isRequired,
-    onChangeFillColor: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    setHoveredItem: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     fillModeGradientType: state.scratchPaint.fillMode.gradientType, // Last user-selected gradient type

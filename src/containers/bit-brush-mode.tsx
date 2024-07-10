@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
@@ -10,11 +9,24 @@ import {changeMode} from '../reducers/modes';
 import {clearSelectedItems} from '../reducers/selected-items';
 import {clearSelection} from '../helper/selection';
 
-import BitLineModeComponent from '../components/bit-line-mode/bit-line-mode.jsx';
-import BitLineTool from '../helper/bit-tools/line-tool';
+import BitBrushModeComponent from '../components/bit-brush-mode/bit-brush-mode.jsx';
+import BitBrushTool from '../helper/bit-tools/brush-tool';
 
-class BitLineMode extends React.Component {
-    constructor (props) {
+interface BitBrushModeProps {
+    bitBrushSize: number;
+    clearGradient: () => void;
+    clearSelectedItems: () => void;
+    color?: string;
+    handleMouseDown: () => void;
+    isBitBrushModeActive: boolean;
+    onChangeFillColor: (fillColor: string) => void;
+    onUpdateImage: () => void;
+}
+
+class BitBrushMode extends React.Component<BitBrushModeProps> {
+    tool: BitBrushTool;
+    
+    constructor (props: BitBrushModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -22,26 +34,26 @@ class BitLineMode extends React.Component {
         ]);
     }
     componentDidMount () {
-        if (this.props.isBitLineModeActive) {
-            this.activateTool(this.props);
+        if (this.props.isBitBrushModeActive) {
+            this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: BitBrushModeProps) {
         if (this.tool && nextProps.color !== this.props.color) {
             this.tool.setColor(nextProps.color);
         }
         if (this.tool && nextProps.bitBrushSize !== this.props.bitBrushSize) {
-            this.tool.setLineSize(nextProps.bitBrushSize);
+            this.tool.setBrushSize(nextProps.bitBrushSize);
         }
 
-        if (nextProps.isBitLineModeActive && !this.props.isBitLineModeActive) {
+        if (nextProps.isBitBrushModeActive && !this.props.isBitBrushModeActive) {
             this.activateTool();
-        } else if (!nextProps.isBitLineModeActive && this.props.isBitLineModeActive) {
+        } else if (!nextProps.isBitBrushModeActive && this.props.isBitBrushModeActive) {
             this.deactivateTool();
         }
     }
-    shouldComponentUpdate (nextProps) {
-        return nextProps.isBitLineModeActive !== this.props.isBitLineModeActive;
+    shouldComponentUpdate (nextProps: BitBrushModeProps) {
+        return nextProps.isBitBrushModeActive !== this.props.isBitBrushModeActive;
     }
     componentWillUnmount () {
         if (this.tool) {
@@ -51,17 +63,17 @@ class BitLineMode extends React.Component {
     activateTool () {
         clearSelection(this.props.clearSelectedItems);
         this.props.clearGradient();
-        // Force the default line color if fill is MIXED or transparent
+        // Force the default brush color if fill is MIXED or transparent
         let color = this.props.color;
         if (!color || color === MIXED) {
             this.props.onChangeFillColor(DEFAULT_COLOR);
             color = DEFAULT_COLOR;
         }
-        this.tool = new BitLineTool(
+        this.tool = new BitBrushTool(
             this.props.onUpdateImage
         );
         this.tool.setColor(color);
-        this.tool.setLineSize(this.props.bitBrushSize);
+        this.tool.setBrushSize(this.props.bitBrushSize);
 
         this.tool.activate();
     }
@@ -72,29 +84,18 @@ class BitLineMode extends React.Component {
     }
     render () {
         return (
-            <BitLineModeComponent
-                isSelected={this.props.isBitLineModeActive}
+            <BitBrushModeComponent
+                isSelected={this.props.isBitBrushModeActive}
                 onMouseDown={this.props.handleMouseDown}
             />
         );
     }
 }
 
-BitLineMode.propTypes = {
-    bitBrushSize: PropTypes.number.isRequired,
-    clearGradient: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    color: PropTypes.string,
-    handleMouseDown: PropTypes.func.isRequired,
-    isBitLineModeActive: PropTypes.bool.isRequired,
-    onChangeFillColor: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired
-};
-
 const mapStateToProps = state => ({
     bitBrushSize: state.scratchPaint.bitBrushSize,
     color: state.scratchPaint.color.fillColor.primary,
-    isBitLineModeActive: state.scratchPaint.mode === Modes.BIT_LINE
+    isBitBrushModeActive: state.scratchPaint.mode === Modes.BIT_BRUSH
 });
 const mapDispatchToProps = dispatch => ({
     clearSelectedItems: () => {
@@ -104,7 +105,7 @@ const mapDispatchToProps = dispatch => ({
         dispatch(clearFillGradient());
     },
     handleMouseDown: () => {
-        dispatch(changeMode(Modes.BIT_LINE));
+        dispatch(changeMode(Modes.BIT_BRUSH));
     },
     onChangeFillColor: fillColor => {
         dispatch(changeFillColor(fillColor));
@@ -114,4 +115,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(BitLineMode);
+)(BitBrushMode);

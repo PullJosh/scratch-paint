@@ -1,12 +1,11 @@
 import paper from '@scratch/paper';
 import React from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 
 import CopyPasteHOC from '../hocs/copy-paste-hoc.jsx';
-import ModeToolsComponent from '../components/mode-tools/mode-tools.jsx';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
+import ModeToolsComponent from '../components/mode-tools/mode-tools';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
 import {
     deleteSelection,
     getSelectedLeafItems,
@@ -14,15 +13,27 @@ import {
     getAllRootItems,
     selectAllItems,
     selectAllSegments
-} from '../helper/selection';
-import {HANDLE_RATIO, ensureClockwise} from '../helper/math';
-import {getRaster} from '../helper/layer';
-import {flipBitmapHorizontal, flipBitmapVertical, selectAllBitmap} from '../helper/bitmap';
-import Formats, {isBitmap} from '../lib/format';
-import Modes from '../lib/modes';
+} from '../helper/selection.js';
+import {HANDLE_RATIO, ensureClockwise} from '../helper/math.js';
+import {getRaster} from '../helper/layer.js';
+import {flipBitmapHorizontal, flipBitmapVertical, selectAllBitmap} from '../helper/bitmap.js';
+import Formats, {isBitmap} from '../lib/format.js';
+import Modes from '../lib/modes.js';
 
-class ModeTools extends React.Component {
-    constructor (props) {
+interface ModeToolsProps {
+    clearSelectedItems: () => void;
+    format?: keyof typeof Formats;
+    mode?: keyof typeof Modes;
+    onCopyToClipboard: () => void;
+    onPasteFromClipboard: () => void;
+    onUpdateImage: () => void;
+    // Listen on selected items to update hasSelectedPoints
+    selectedItems?: paper.Item[];
+    setSelectedItems: (format: string) => void;
+}
+
+class ModeTools extends React.Component<ModeToolsProps> {
+    constructor (props: ModeToolsProps) {
         super(props);
         bindAll(this, [
             '_getSelectedUncurvedPoints',
@@ -147,7 +158,7 @@ class ModeTools extends React.Component {
             this.props.onUpdateImage();
         }
     }
-    _handleFlip (horizontalScale, verticalScale, selectedItems) {
+    _handleFlip (horizontalScale: number, verticalScale: number, selectedItems: paper.Item[]) {
         if (selectedItems.length === 0) {
             // If nothing is selected, select everything
             selectedItems = getAllRootItems();
@@ -226,19 +237,6 @@ class ModeTools extends React.Component {
         );
     }
 }
-
-ModeTools.propTypes = {
-    clearSelectedItems: PropTypes.func.isRequired,
-    format: PropTypes.oneOf(Object.keys(Formats)),
-    mode: PropTypes.oneOf(Object.keys(Modes)),
-    onCopyToClipboard: PropTypes.func.isRequired,
-    onPasteFromClipboard: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    // Listen on selected items to update hasSelectedPoints
-    selectedItems:
-        PropTypes.arrayOf(PropTypes.instanceOf(paper.Item)), // eslint-disable-line react/no-unused-prop-types
-    setSelectedItems: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     format: state.scratchPaint.format,

@@ -1,12 +1,11 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import bindAll from 'lodash.bindall';
 import parseColor from 'parse-color';
 import {injectIntl, intlShape} from 'react-intl';
 
-import {getSelectedLeafItems} from '../helper/selection';
-import Formats, {isBitmap} from '../lib/format';
-import GradientTypes from '../lib/gradient-types';
+import {getSelectedLeafItems} from '../helper/selection.js';
+import Formats, {isBitmap} from '../lib/format.js';
+import GradientTypes from '../lib/gradient-types.js';
 
 import ColorIndicatorComponent from '../components/color-indicator.jsx';
 import {applyColorToSelection,
@@ -14,11 +13,34 @@ import {applyColorToSelection,
     applyStrokeWidthToSelection,
     generateSecondaryColor,
     swapColorsInSelection,
-    MIXED} from '../helper/style-path';
+    MIXED} from '../helper/style-path.js';
 
-const makeColorIndicator = (label, isStroke) => {
-    class ColorIndicator extends React.Component {
-        constructor (props) {
+const makeColorIndicator = (label, isStroke: boolean) => {
+    interface ColorIndicatorProps {
+        colorIndex: number;
+        disabled: boolean;
+        color?: string;
+        color2?: string;
+        colorModalVisible: boolean;
+        fillBitmapShapes: boolean;
+        format?: keyof typeof Formats;
+        gradientType: keyof typeof GradientTypes;
+        intl: any; // TODO: intlShape
+        isEyeDropping: boolean;
+        onChangeColorIndex: (index: number) => void;
+        onChangeColor: (color: string, index: number) => void;
+        onChangeGradientType?: (gradientType: string) => void;
+        onChangeStrokeWidth?: (width: number) => void;
+        onCloseColor: () => void;
+        onUpdateImage: () => void;
+        setSelectedItems: (format: string) => void;
+        textEditTarget?: number; // TODO: The old propType was `PropTypes.number`, but in the code it seems like this is actually expecting a string in most cases
+    }
+    
+    class ColorIndicator extends React.Component<ColorIndicatorProps> {
+        _hasChanged: boolean;
+        
+        constructor (props: ColorIndicatorProps) {
             super(props);
             bindAll(this, [
                 'handleChangeColor',
@@ -30,7 +52,7 @@ const makeColorIndicator = (label, isStroke) => {
             // Flag to track whether an svg-update-worthy change has been made
             this._hasChanged = false;
         }
-        componentWillReceiveProps (newProps) {
+        componentWillReceiveProps (newProps: ColorIndicatorProps) {
             const {colorModalVisible, onUpdateImage} = this.props;
             if (colorModalVisible && !newProps.colorModalVisible) {
                 // Submit the new SVG, which also stores a single undo/redo action.
@@ -38,7 +60,7 @@ const makeColorIndicator = (label, isStroke) => {
                 this._hasChanged = false;
             }
         }
-        handleChangeColor (newColor) {
+        handleChangeColor (newColor: string | null) {
             // Stroke-selector-specific logic: if we change the stroke color from "none" to something visible, ensure
             // there's a nonzero stroke width. If we change the stroke color to "none", set the stroke width to zero.
             if (isStroke) {
@@ -57,10 +79,10 @@ const makeColorIndicator = (label, isStroke) => {
                     newColor === null && otherColor === null;
 
                 if (oldStyleWasNull && !newStyleIsNull) {
-                    this._hasChanged = applyStrokeWidthToSelection(1, this.props.textEditTarget) || this._hasChanged;
+                    this._hasChanged = applyStrokeWidthToSelection(1, String(this.props.textEditTarget)) || this._hasChanged;
                     this.props.onChangeStrokeWidth(1);
                 } else if (!oldStyleWasNull && newStyleIsNull) {
-                    this._hasChanged = applyStrokeWidthToSelection(0, this.props.textEditTarget) || this._hasChanged;
+                    this._hasChanged = applyStrokeWidthToSelection(0, String(this.props.textEditTarget)) || this._hasChanged;
                     this.props.onChangeStrokeWidth(0);
                 }
             }
@@ -74,17 +96,17 @@ const makeColorIndicator = (label, isStroke) => {
                 // In bitmap mode, only the fill color selector is used, but it applies to stroke if fillBitmapShapes
                 // is set to true via the "Fill"/"Outline" selector button
                 isStroke || (formatIsBitmap && !this.props.fillBitmapShapes),
-                this.props.textEditTarget);
+                String(this.props.textEditTarget));
             this._hasChanged = this._hasChanged || isDifferent;
             this.props.onChangeColor(newColor, this.props.colorIndex);
         }
-        handleChangeGradientType (gradientType) {
+        handleChangeGradientType (gradientType: keyof typeof GradientTypes) {
             const formatIsBitmap = isBitmap(this.props.format);
             // Apply color and update redux, but do not update svg until picker closes.
             const isDifferent = applyGradientTypeToSelection(
                 gradientType,
                 isStroke || (formatIsBitmap && !this.props.fillBitmapShapes),
-                this.props.textEditTarget);
+                String(this.props.textEditTarget));
             this._hasChanged = this._hasChanged || isDifferent;
             const hasSelectedItems = getSelectedLeafItems().length > 0;
             if (hasSelectedItems) {
@@ -118,7 +140,7 @@ const makeColorIndicator = (label, isStroke) => {
                 const formatIsBitmap = isBitmap(this.props.format);
                 const isDifferent = swapColorsInSelection(
                     isStroke || (formatIsBitmap && !this.props.fillBitmapShapes),
-                    this.props.textEditTarget);
+                    String(this.props.textEditTarget));
                 this.props.setSelectedItems(this.props.format);
                 this._hasChanged = this._hasChanged || isDifferent;
             } else {
@@ -144,27 +166,6 @@ const makeColorIndicator = (label, isStroke) => {
             );
         }
     }
-
-    ColorIndicator.propTypes = {
-        colorIndex: PropTypes.number.isRequired,
-        disabled: PropTypes.bool.isRequired,
-        color: PropTypes.string,
-        color2: PropTypes.string,
-        colorModalVisible: PropTypes.bool.isRequired,
-        fillBitmapShapes: PropTypes.bool.isRequired,
-        format: PropTypes.oneOf(Object.keys(Formats)),
-        gradientType: PropTypes.oneOf(Object.keys(GradientTypes)).isRequired,
-        intl: intlShape,
-        isEyeDropping: PropTypes.bool.isRequired,
-        onChangeColorIndex: PropTypes.func.isRequired,
-        onChangeColor: PropTypes.func.isRequired,
-        onChangeGradientType: PropTypes.func,
-        onChangeStrokeWidth: PropTypes.func,
-        onCloseColor: PropTypes.func.isRequired,
-        onUpdateImage: PropTypes.func.isRequired,
-        setSelectedItems: PropTypes.func.isRequired,
-        textEditTarget: PropTypes.number
-    };
 
     return injectIntl(ColorIndicator);
 };

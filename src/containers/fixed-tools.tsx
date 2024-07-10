@@ -1,25 +1,37 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 
 import FixedToolsComponent from '../components/fixed-tools/fixed-tools.jsx';
 
-import {changeMode} from '../reducers/modes';
-import {changeFormat} from '../reducers/format';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
-import {deactivateEyeDropper} from '../reducers/eye-dropper';
-import {setTextEditTarget} from '../reducers/text-edit-target';
-import {setLayout} from '../reducers/layout';
+import {changeMode} from '../reducers/modes.js';
+import {changeFormat} from '../reducers/format.js';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
+import {deactivateEyeDropper} from '../reducers/eye-dropper.js';
+import {setTextEditTarget} from '../reducers/text-edit-target.js';
+import {setLayout} from '../reducers/layout.js';
 
-import {getSelectedLeafItems} from '../helper/selection';
-import {bringToFront, sendBackward, sendToBack, bringForward} from '../helper/order';
-import {groupSelection, ungroupSelection} from '../helper/group';
+import {getSelectedLeafItems} from '../helper/selection.js';
+import {bringToFront, sendBackward, sendToBack, bringForward} from '../helper/order.js';
+import {groupSelection, ungroupSelection} from '../helper/group.js';
 
-import Formats, {isBitmap} from '../lib/format';
+import Formats, {isBitmap} from '../lib/format.js';
 import bindAll from 'lodash.bindall';
 
-class FixedTools extends React.Component {
-    constructor (props) {
+interface FixedToolsProps {
+    canRedo: () => boolean;
+    canUndo: () => boolean;
+    clearSelectedItems: () => void;
+    format?: keyof typeof Formats;
+    name?: string;
+    onRedo: () => void;
+    onUndo: () => void;
+    onUpdateImage: () => void;
+    onUpdateName: (name: string) => void;
+    setSelectedItems: (format: keyof typeof Formats) => void;
+}
+
+class FixedTools extends React.Component<FixedToolsProps> {
+    constructor (props: FixedToolsProps) {
         super(props);
         bindAll(this, [
             'handleSendBackward',
@@ -72,19 +84,6 @@ class FixedTools extends React.Component {
         );
     }
 }
-
-FixedTools.propTypes = {
-    canRedo: PropTypes.func.isRequired,
-    canUndo: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    format: PropTypes.oneOf(Object.keys(Formats)),
-    name: PropTypes.string,
-    onRedo: PropTypes.func.isRequired,
-    onUndo: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    onUpdateName: PropTypes.func.isRequired,
-    setSelectedItems: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     changeColorToEyeDropper: state.scratchPaint.color.eyeDropper.callback,

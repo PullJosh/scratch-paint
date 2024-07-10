@@ -1,16 +1,27 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes';
-import Blobbiness from '../helper/blob-tools/blob';
-import {changeBrushSize} from '../reducers/eraser-mode';
-import {clearSelectedItems} from '../reducers/selected-items';
+import Modes from '../lib/modes.js';
+import Blobbiness from '../helper/blob-tools/blob.js';
+import {changeBrushSize} from '../reducers/eraser-mode.js';
+import {clearSelectedItems} from '../reducers/selected-items.js';
 import EraserModeComponent from '../components/eraser-mode/eraser-mode.jsx';
-import {changeMode} from '../reducers/modes';
+import {changeMode} from '../reducers/modes.js';
 
-class EraserMode extends React.Component {
-    constructor (props) {
+interface EraserModeProps {
+    clearSelectedItems: () => void;
+    eraserModeState?: {
+        brushSize: number;
+    };
+    handleMouseDown: () => void;
+    isEraserModeActive: boolean;
+    onUpdateImage: () => void;
+}
+
+class EraserMode extends React.Component<EraserModeProps> {
+    blob: Blobbiness;
+    
+    constructor (props: EraserModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -24,7 +35,7 @@ class EraserMode extends React.Component {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: EraserModeProps) {
         if (nextProps.isEraserModeActive && !this.props.isEraserModeActive) {
             this.activateTool();
         } else if (!nextProps.isEraserModeActive && this.props.isEraserModeActive) {
@@ -36,7 +47,7 @@ class EraserMode extends React.Component {
             });
         }
     }
-    shouldComponentUpdate (nextProps) {
+    shouldComponentUpdate (nextProps: EraserModeProps) {
         return nextProps.isEraserModeActive !== this.props.isEraserModeActive;
     }
     componentWillUnmount () {
@@ -59,16 +70,6 @@ class EraserMode extends React.Component {
         );
     }
 }
-
-EraserMode.propTypes = {
-    clearSelectedItems: PropTypes.func.isRequired,
-    eraserModeState: PropTypes.shape({
-        brushSize: PropTypes.number.isRequired
-    }),
-    handleMouseDown: PropTypes.func.isRequired,
-    isEraserModeActive: PropTypes.bool.isRequired,
-    onUpdateImage: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     eraserModeState: state.scratchPaint.eraserMode,

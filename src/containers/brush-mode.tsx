@@ -1,21 +1,39 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes';
-import ColorStyleProptype from '../lib/color-style-proptype';
-import Blobbiness from '../helper/blob-tools/blob';
-import {MIXED} from '../helper/style-path';
+import Modes from '../lib/modes.js';
+import ColorStyleProptype from '../lib/color-style-proptype.js';
+import Blobbiness from '../helper/blob-tools/blob.js';
+import {MIXED} from '../helper/style-path.js';
 
-import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style';
-import {changeMode} from '../reducers/modes';
-import {clearSelectedItems} from '../reducers/selected-items';
-import {clearSelection} from '../helper/selection';
+import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style.js';
+import {changeMode} from '../reducers/modes.js';
+import {clearSelectedItems} from '../reducers/selected-items.js';
+import {clearSelection} from '../helper/selection.js';
 
 import BrushModeComponent from '../components/brush-mode/brush-mode.jsx';
 
-class BrushMode extends React.Component {
-    constructor (props) {
+interface BrushModeProps {
+    brushModeState?: {
+        brushSize: number;
+    };
+    clearGradient: () => void;
+    clearSelectedItems: () => void;
+    colorState: {
+        fillColor: any; // TODO: ColorStyleProptype
+        strokeColor: any; // TODO: ColorStyleProptype
+        strokeWidth: number;
+    };
+    handleMouseDown: () => void;
+    isBrushModeActive: boolean;
+    onChangeFillColor: (fillColor: string) => void;
+    onUpdateImage: () => void;
+}
+
+class BrushMode extends React.Component<BrushModeProps> {
+    blob: Blobbiness;
+    
+    constructor (props: BrushModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -26,10 +44,10 @@ class BrushMode extends React.Component {
     }
     componentDidMount () {
         if (this.props.isBrushModeActive) {
-            this.activateTool(this.props);
+            this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: BrushModeProps) {
         if (nextProps.isBrushModeActive && !this.props.isBrushModeActive) {
             this.activateTool();
         } else if (!nextProps.isBrushModeActive && this.props.isBrushModeActive) {
@@ -45,7 +63,7 @@ class BrushMode extends React.Component {
             });
         }
     }
-    shouldComponentUpdate (nextProps) {
+    shouldComponentUpdate (nextProps: BrushModeProps) {
         return nextProps.isBrushModeActive !== this.props.isBrushModeActive;
     }
     componentWillUnmount () {
@@ -81,23 +99,6 @@ class BrushMode extends React.Component {
         );
     }
 }
-
-BrushMode.propTypes = {
-    brushModeState: PropTypes.shape({
-        brushSize: PropTypes.number.isRequired
-    }),
-    clearGradient: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    colorState: PropTypes.shape({
-        fillColor: ColorStyleProptype,
-        strokeColor: ColorStyleProptype,
-        strokeWidth: PropTypes.number
-    }).isRequired,
-    handleMouseDown: PropTypes.func.isRequired,
-    isBrushModeActive: PropTypes.bool.isRequired,
-    onChangeFillColor: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     brushModeState: state.scratchPaint.brushMode,

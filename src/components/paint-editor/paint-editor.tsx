@@ -2,39 +2,38 @@ import paper from '@scratch/paper';
 import classNames from 'classnames';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import PaperCanvas from '../../containers/paper-canvas.jsx';
-import ScrollableCanvas from '../../containers/scrollable-canvas.jsx';
+import PaperCanvas from '../../containers/paper-canvas';
+import ScrollableCanvas from '../../containers/scrollable-canvas';
 
-import BitBrushMode from '../../containers/bit-brush-mode.jsx';
-import BitLineMode from '../../containers/bit-line-mode.jsx';
-import BitOvalMode from '../../containers/bit-oval-mode.jsx';
-import BitRectMode from '../../containers/bit-rect-mode.jsx';
-import BitFillMode from '../../containers/bit-fill-mode.jsx';
-import BitEraserMode from '../../containers/bit-eraser-mode.jsx';
-import BitSelectMode from '../../containers/bit-select-mode.jsx';
+import BitBrushMode from '../../containers/bit-brush-mode';
+import BitLineMode from '../../containers/bit-line-mode';
+import BitOvalMode from '../../containers/bit-oval-mode';
+import BitRectMode from '../../containers/bit-rect-mode';
+import BitFillMode from '../../containers/bit-fill-mode';
+import BitEraserMode from '../../containers/bit-eraser-mode';
+import BitSelectMode from '../../containers/bit-select-mode';
 import Box from '../box/box.jsx';
 import Button from '../button/button.jsx';
 import ButtonGroup from '../button-group/button-group.jsx';
-import BrushMode from '../../containers/brush-mode.jsx';
-import EraserMode from '../../containers/eraser-mode.jsx';
-import FillColorIndicatorComponent from '../../containers/fill-color-indicator.jsx';
-import FillMode from '../../containers/fill-mode.jsx';
+import BrushMode from '../../containers/brush-mode';
+import EraserMode from '../../containers/eraser-mode';
+import FillColorIndicatorComponent from '../../containers/fill-color-indicator';
+import FillMode from '../../containers/fill-mode';
 import InputGroup from '../input-group/input-group.jsx';
-import LineMode from '../../containers/line-mode.jsx';
+import LineMode from '../../containers/line-mode';
 import Loupe from '../loupe/loupe.jsx';
-import FixedToolsContainer from '../../containers/fixed-tools.jsx';
-import ModeToolsContainer from '../../containers/mode-tools.jsx';
-import OvalMode from '../../containers/oval-mode.jsx';
-import RectMode from '../../containers/rect-mode.jsx';
-import ReshapeMode from '../../containers/reshape-mode.jsx';
-import SelectMode from '../../containers/select-mode.jsx';
-import StrokeColorIndicatorComponent from '../../containers/stroke-color-indicator.jsx';
-import StrokeWidthIndicatorComponent from '../../containers/stroke-width-indicator.jsx';
-import TextMode from '../../containers/text-mode.jsx';
+import FixedToolsContainer from '../../containers/fixed-tools';
+import ModeToolsContainer from '../../containers/mode-tools';
+import OvalMode from '../../containers/oval-mode';
+import RectMode from '../../containers/rect-mode';
+import ReshapeMode from '../../containers/reshape-mode';
+import SelectMode from '../../containers/select-mode';
+import StrokeColorIndicatorComponent from '../../containers/stroke-color-indicator';
+import StrokeWidthIndicatorComponent from '../../containers/stroke-width-indicator';
+import TextMode from '../../containers/text-mode';
 
-import Formats, {isBitmap, isVector} from '../../lib/format';
+import Formats, {isBitmap, isVector} from '../../lib/format.js';
 import styles from './paint-editor.css';
 
 import bitmapIcon from './icons/bitmap.svg';
@@ -55,7 +54,37 @@ const messages = defineMessages({
     }
 });
 
-const PaintEditorComponent = props => (
+interface PaintEditorComponentProps {
+    canRedo: () => boolean;
+    canUndo: () => boolean;
+    canvas?: Element;
+    colorInfo?: any; // TODO: This used to be Loupe.propTypes.colorInfo
+    format?: keyof typeof Formats;
+    image?: string | HTMLImageElement;
+    imageFormat?: string;
+    imageId?: string;
+    intl: any; // TODO: This used to be `intlShape`
+    isEyeDropping?: boolean;
+    name?: string;
+    onRedo: () => void;
+    onSwitchToBitmap: () => void;
+    onSwitchToVector: () => void;
+    onUndo: () => void;
+    onUpdateImage: () => void;
+    onUpdateName: () => void;
+    onZoomIn: () => void;
+    onZoomOut: () => void;
+    onZoomReset: () => void;
+    rotationCenterX?: number;
+    rotationCenterY?: number;
+    rtl?: boolean;
+    setCanvas: () => void;
+    setTextArea: () => void;
+    textArea?: Element;
+    zoomLevelId?: string;
+}
+
+const PaintEditorComponent = (props: PaintEditorComponentProps) => (
     <div
         className={styles.editorContainer}
         dir={props.rtl ? 'rtl' : 'ltr'}
@@ -302,38 +331,5 @@ const PaintEditorComponent = props => (
         </div>
     </div>
 );
-
-PaintEditorComponent.propTypes = {
-    canRedo: PropTypes.func.isRequired,
-    canUndo: PropTypes.func.isRequired,
-    canvas: PropTypes.instanceOf(Element),
-    colorInfo: Loupe.propTypes.colorInfo,
-    format: PropTypes.oneOf(Object.keys(Formats)),
-    image: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.instanceOf(HTMLImageElement)
-    ]),
-    imageFormat: PropTypes.string,
-    imageId: PropTypes.string,
-    intl: intlShape,
-    isEyeDropping: PropTypes.bool,
-    name: PropTypes.string,
-    onRedo: PropTypes.func.isRequired,
-    onSwitchToBitmap: PropTypes.func.isRequired,
-    onSwitchToVector: PropTypes.func.isRequired,
-    onUndo: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    onUpdateName: PropTypes.func.isRequired,
-    onZoomIn: PropTypes.func.isRequired,
-    onZoomOut: PropTypes.func.isRequired,
-    onZoomReset: PropTypes.func.isRequired,
-    rotationCenterX: PropTypes.number,
-    rotationCenterY: PropTypes.number,
-    rtl: PropTypes.bool,
-    setCanvas: PropTypes.func.isRequired,
-    setTextArea: PropTypes.func.isRequired,
-    textArea: PropTypes.instanceOf(Element),
-    zoomLevelId: PropTypes.string
-};
 
 export default injectIntl(PaintEditorComponent);

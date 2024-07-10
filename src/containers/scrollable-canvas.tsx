@@ -1,22 +1,35 @@
 import paper from '@scratch/paper';
-import PropTypes from 'prop-types';
 
 import React from 'react';
 import {connect} from 'react-redux';
 import ScrollableCanvasComponent from '../components/scrollable-canvas/scrollable-canvas.jsx';
 
-import {clampViewBounds, pan, zoomOnFixedPoint, getWorkspaceBounds} from '../helper/view';
-import {updateViewBounds} from '../reducers/view-bounds';
-import {redrawSelectionBox} from '../reducers/selected-items';
+import {clampViewBounds, pan, zoomOnFixedPoint, getWorkspaceBounds} from '../helper/view.js';
+import {updateViewBounds} from '../reducers/view-bounds.js';
+import {redrawSelectionBox} from '../reducers/selected-items.js';
 
-import {getEventXY} from '../lib/touch-utils';
+import {getEventXY} from '../lib/touch-utils.js';
 import bindAll from 'lodash.bindall';
 
-class ScrollableCanvas extends React.Component {
+interface ScrollableCanvasProps {
+    canvas: Element;
+    children: React.ReactNode;
+    hideScrollbars?: boolean;
+    redrawSelectionBox: () => void;
+    style?: string;
+    updateViewBounds: (matrix: paper.Matrix) => void;
+}
+
+class ScrollableCanvas extends React.Component<ScrollableCanvasProps> {
+    initialMouseX: number | null;
+    initialMouseY: number | null;
+    initialScreenX: number | null;
+    initialScreenY: number | null;
+    
     static get ZOOM_INCREMENT () {
         return 0.5;
     }
-    constructor (props) {
+    constructor (props: ScrollableCanvasProps) {
         super(props);
         bindAll(this, [
             'handleHorizontalScrollbarMouseDown',
@@ -33,7 +46,7 @@ class ScrollableCanvas extends React.Component {
             this.props.canvas.addEventListener('wheel', this.handleWheel);
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: ScrollableCanvasProps) {
         if (nextProps.canvas) {
             if (this.props.canvas) {
                 this.props.canvas.removeEventListener('wheel', this.handleWheel);
@@ -41,7 +54,7 @@ class ScrollableCanvas extends React.Component {
             nextProps.canvas.addEventListener('wheel', this.handleWheel);
         }
     }
-    handleHorizontalScrollbarMouseDown (event) {
+    handleHorizontalScrollbarMouseDown (event: React.MouseEvent | React.TouchEvent) {
         this.initialMouseX = getEventXY(event).x;
         this.initialScreenX = paper.view.matrix.tx;
         window.addEventListener('mousemove', this.handleHorizontalScrollbarMouseMove);
@@ -50,7 +63,7 @@ class ScrollableCanvas extends React.Component {
         window.addEventListener('touchend', this.handleHorizontalScrollbarMouseUp);
         event.preventDefault();
     }
-    handleHorizontalScrollbarMouseMove (event) {
+    handleHorizontalScrollbarMouseMove (event: MouseEvent | TouchEvent) {
         const dx = this.initialMouseX - getEventXY(event).x;
         paper.view.matrix.tx = this.initialScreenX + (dx * paper.view.zoom * 2);
         clampViewBounds();
@@ -66,7 +79,7 @@ class ScrollableCanvas extends React.Component {
         this.initialScreenX = null;
         event.preventDefault();
     }
-    handleVerticalScrollbarMouseDown (event) {
+    handleVerticalScrollbarMouseDown (event: React.MouseEvent | React.TouchEvent) {
         this.initialMouseY = getEventXY(event).y;
         this.initialScreenY = paper.view.matrix.ty;
         window.addEventListener('mousemove', this.handleVerticalScrollbarMouseMove);
@@ -75,14 +88,14 @@ class ScrollableCanvas extends React.Component {
         window.addEventListener('touchend', this.handleVerticalScrollbarMouseUp);
         event.preventDefault();
     }
-    handleVerticalScrollbarMouseMove (event) {
+    handleVerticalScrollbarMouseMove (event: MouseEvent | TouchEvent) {
         const dy = this.initialMouseY - getEventXY(event).y;
         paper.view.matrix.ty = this.initialScreenY + (dy * paper.view.zoom * 2);
         clampViewBounds();
         this.props.updateViewBounds(paper.view.matrix);
         event.preventDefault();
     }
-    handleVerticalScrollbarMouseUp (event) {
+    handleVerticalScrollbarMouseUp (event: MouseEvent | TouchEvent) {
         window.removeEventListener('mousemove', this.handleVerticalScrollbarMouseMove);
         window.removeEventListener('touchmove', this.handleVerticalScrollbarMouseMove, {passive: false});
         window.removeEventListener('mouseup', this.handleVerticalScrollbarMouseUp);
@@ -91,7 +104,7 @@ class ScrollableCanvas extends React.Component {
         this.initialScreenY = null;
         event.preventDefault();
     }
-    handleWheel (event) {
+    handleWheel (event: WheelEvent) {
         // Multiplier variable, so that non-pixel-deltaModes are supported. Needed for Firefox.
         // See #529 (or LLK/scratch-blocks#1190).
         const multiplier = event.deltaMode === 0x1 ? 15 : 1;
@@ -157,15 +170,6 @@ class ScrollableCanvas extends React.Component {
         );
     }
 }
-
-ScrollableCanvas.propTypes = {
-    canvas: PropTypes.instanceOf(Element),
-    children: PropTypes.node.isRequired,
-    hideScrollbars: PropTypes.bool,
-    redrawSelectionBox: PropTypes.func.isRequired,
-    style: PropTypes.string,
-    updateViewBounds: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     viewBounds: state.scratchPaint.viewBounds

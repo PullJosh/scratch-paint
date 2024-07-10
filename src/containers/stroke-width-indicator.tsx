@@ -1,27 +1,38 @@
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import React from 'react';
 import bindAll from 'lodash.bindall';
 import parseColor from 'parse-color';
-import {changeStrokeColor, changeStrokeColor2, changeStrokeGradientType} from '../reducers/stroke-style';
-import {changeStrokeWidth} from '../reducers/stroke-width';
+import {changeStrokeColor, changeStrokeColor2, changeStrokeGradientType} from '../reducers/stroke-style.js';
+import {changeStrokeWidth} from '../reducers/stroke-width.js';
 import StrokeWidthIndicatorComponent from '../components/stroke-width-indicator.jsx';
-import {getSelectedLeafItems} from '../helper/selection';
+import {getSelectedLeafItems} from '../helper/selection.js';
 import {
     applyColorToSelection, applyStrokeWidthToSelection, getColorsFromSelection, MIXED
-} from '../helper/style-path';
-import GradientTypes from '../lib/gradient-types';
-import Modes from '../lib/modes';
-import Formats, {isBitmap} from '../lib/format';
+} from '../helper/style-path.js';
+import GradientTypes from '../lib/gradient-types.js';
+import Modes from '../lib/modes.js';
+import Formats, {isBitmap} from '../lib/format.js';
 
-class StrokeWidthIndicator extends React.Component {
-    constructor (props) {
+interface StrokeWidthIndicatorProps {
+    disabled: boolean;
+    format?: keyof typeof Formats;
+    onChangeStrokeColor: (strokeColor: string) => void;
+    onChangeStrokeColor2: (strokeColor: string) => void;
+    onChangeStrokeGradientType: (strokeColor: string) => void;
+    onChangeStrokeWidth: (strokeWidth: number) => void;
+    onUpdateImage: () => void;
+    strokeWidth?: number;
+    textEditTarget?: number;
+}
+
+class StrokeWidthIndicator extends React.Component<StrokeWidthIndicatorProps> {
+    constructor (props: StrokeWidthIndicatorProps) {
         super(props);
         bindAll(this, [
             'handleChangeStrokeWidth'
         ]);
     }
-    handleChangeStrokeWidth (newWidth) {
+    handleChangeStrokeWidth (newWidth: number) {
         let changed = applyStrokeWidthToSelection(newWidth, this.props.textEditTarget);
         if ((!this.props.strokeWidth || this.props.strokeWidth === 0) && newWidth > 0) {
             const currentColorState = getColorsFromSelection(getSelectedLeafItems(), isBitmap(this.props.format));
@@ -86,18 +97,6 @@ const mapDispatchToProps = dispatch => ({
         dispatch(changeStrokeWidth(strokeWidth));
     }
 });
-
-StrokeWidthIndicator.propTypes = {
-    disabled: PropTypes.bool.isRequired,
-    format: PropTypes.oneOf(Object.keys(Formats)),
-    onChangeStrokeColor: PropTypes.func.isRequired,
-    onChangeStrokeColor2: PropTypes.func.isRequired,
-    onChangeStrokeGradientType: PropTypes.func.isRequired,
-    onChangeStrokeWidth: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    strokeWidth: PropTypes.number,
-    textEditTarget: PropTypes.number
-};
 
 export default connect(
     mapStateToProps,

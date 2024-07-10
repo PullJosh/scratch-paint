@@ -1,28 +1,56 @@
 import paper from '@scratch/paper';
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Fonts from '../lib/fonts';
-import Modes from '../lib/modes';
-import ColorStyleProptype from '../lib/color-style-proptype';
-import {MIXED} from '../helper/style-path';
+import Fonts from '../lib/fonts.js';
+import Modes from '../lib/modes.js';
+import ColorStyleProptype from '../lib/color-style-proptype.js';
+import {MIXED} from '../helper/style-path.js';
 
-import {changeFont} from '../reducers/font';
-import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style';
-import {changeStrokeColor} from '../reducers/stroke-style';
-import {changeMode} from '../reducers/modes';
-import {setTextEditTarget} from '../reducers/text-edit-target';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
-import {setCursor} from '../reducers/cursor';
+import {changeFont} from '../reducers/font.js';
+import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style.js';
+import {changeStrokeColor} from '../reducers/stroke-style.js';
+import {changeMode} from '../reducers/modes.js';
+import {setTextEditTarget} from '../reducers/text-edit-target.js';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
+import {setCursor} from '../reducers/cursor.js';
 
-import {clearSelection, getSelectedLeafItems} from '../helper/selection';
-import TextTool from '../helper/tools/text-tool';
+import {clearSelection, getSelectedLeafItems} from '../helper/selection.js';
+import TextTool from '../helper/tools/text-tool.js';
 import TextModeComponent from '../components/text-mode/text-mode.jsx';
 import BitTextModeComponent from '../components/bit-text-mode/bit-text-mode.jsx';
 
-class TextMode extends React.Component {
-    constructor (props) {
+interface TextModeProps {
+    changeFont: (font: string) => void;
+    clearGradient: () => void;
+    clearSelectedItems: () => void;
+    colorState: {
+        fillColor: any; // TODO: ColorStyleProptype
+        strokeColor: any; // TODO: ColorStyleProptype
+        strokeWidth: number;
+    };
+    font?: string;
+    handleChangeModeBitText: () => void;
+    handleChangeModeText: () => void;
+    isBitmap?: boolean;
+    isTextModeActive: boolean;
+    onChangeFillColor: (fillColor: any) => void; // TODO: any
+    onChangeStrokeColor: (strokeColor: any) => void; // TODO: any
+    onUpdateImage: () => void;
+    rtl?: boolean;
+    selectedItems?: paper.Item[];
+    setCursor: (cursorString: string) => void;
+    setSelectedItems: () => void;
+    setTextEditTarget: (targetId: number) => void;
+    textArea?: HTMLTextAreaElement;
+    textEditTarget?: number;
+    viewBounds: paper.Matrix;
+}
+
+class TextMode extends React.Component<TextModeProps> {
+    tool: TextTool;
+    
+    constructor (props: TextModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -34,7 +62,7 @@ class TextMode extends React.Component {
             this.activateTool(this.props);
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: TextModeProps) {
         if (this.tool) {
             if (nextProps.colorState !== this.props.colorState) {
                 this.tool.setColorState(nextProps.colorState);
@@ -62,7 +90,7 @@ class TextMode extends React.Component {
             this.deactivateTool();
         }
     }
-    shouldComponentUpdate (nextProps) {
+    shouldComponentUpdate (nextProps: TextModeProps) {
         return nextProps.isTextModeActive !== this.props.isTextModeActive;
     }
     componentWillUnmount () {
@@ -70,7 +98,7 @@ class TextMode extends React.Component {
             this.deactivateTool();
         }
     }
-    activateTool (nextProps) {
+    activateTool (nextProps: TextModeProps) {
         const selected = getSelectedLeafItems();
         let textBoxToStartEditing = null;
         if (selected.length === 1 && selected[0] instanceof paper.PointText) {
@@ -139,33 +167,6 @@ class TextMode extends React.Component {
         );
     }
 }
-
-TextMode.propTypes = {
-    changeFont: PropTypes.func.isRequired,
-    clearGradient: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    colorState: PropTypes.shape({
-        fillColor: ColorStyleProptype,
-        strokeColor: ColorStyleProptype,
-        strokeWidth: PropTypes.number
-    }).isRequired,
-    font: PropTypes.string,
-    handleChangeModeBitText: PropTypes.func.isRequired,
-    handleChangeModeText: PropTypes.func.isRequired,
-    isBitmap: PropTypes.bool,
-    isTextModeActive: PropTypes.bool.isRequired,
-    onChangeFillColor: PropTypes.func.isRequired,
-    onChangeStrokeColor: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    rtl: PropTypes.bool,
-    selectedItems: PropTypes.arrayOf(PropTypes.instanceOf(paper.Item)),
-    setCursor: PropTypes.func.isRequired,
-    setSelectedItems: PropTypes.func.isRequired,
-    setTextEditTarget: PropTypes.func.isRequired,
-    textArea: PropTypes.instanceOf(Element),
-    textEditTarget: PropTypes.number,
-    viewBounds: PropTypes.instanceOf(paper.Matrix).isRequired
-};
 
 const mapStateToProps = (state, ownProps) => ({
     colorState: state.scratchPaint.color,

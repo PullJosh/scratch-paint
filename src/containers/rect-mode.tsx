@@ -1,25 +1,45 @@
 import paper from '@scratch/paper';
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes';
-import {MIXED} from '../helper/style-path';
-import ColorStyleProptype from '../lib/color-style-proptype';
-import GradientTypes from '../lib/gradient-types';
+import Modes from '../lib/modes.js';
+import {MIXED} from '../helper/style-path.js';
+import ColorStyleProptype from '../lib/color-style-proptype.js';
+import GradientTypes from '../lib/gradient-types.js';
 
-import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style';
-import {changeStrokeColor, clearStrokeGradient} from '../reducers/stroke-style';
-import {changeMode} from '../reducers/modes';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
-import {setCursor} from '../reducers/cursor';
+import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style.js';
+import {changeStrokeColor, clearStrokeGradient} from '../reducers/stroke-style.js';
+import {changeMode} from '../reducers/modes.js';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
+import {setCursor} from '../reducers/cursor.js';
 
-import {clearSelection, getSelectedLeafItems} from '../helper/selection';
-import OvalTool from '../helper/tools/oval-tool';
-import OvalModeComponent from '../components/oval-mode/oval-mode.jsx';
+import {clearSelection, getSelectedLeafItems} from '../helper/selection.js';
+import RectTool from '../helper/tools/rect-tool.js';
+import RectModeComponent from '../components/rect-mode/rect-mode.jsx';
 
-class OvalMode extends React.Component {
-    constructor (props) {
+interface RectModeProps {
+    clearFillGradient: () => void;
+    clearStrokeGradient: () => void;
+    clearSelectedItems: () => void;
+    colorState: {
+        fillColor: any; // TODO: ColorStyleProptype
+        strokeColor: any; // TODO: ColorStyleProptype
+        strokeWidth: number;
+    };
+    handleMouseDown: () => void;
+    isRectModeActive: boolean;
+    onChangeFillColor: (fillColor: any) => void; // TODO: any
+    onChangeStrokeColor: (strokeColor: any) => void; // TODO: any
+    onUpdateImage: () => void;
+    selectedItems?: paper.Item[];
+    setCursor: (cursorString: string) => void;
+    setSelectedItems: () => void;
+}
+
+class RectMode extends React.Component<RectModeProps> {
+    tool: RectTool;
+    
+    constructor (props: RectModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -28,11 +48,11 @@ class OvalMode extends React.Component {
         ]);
     }
     componentDidMount () {
-        if (this.props.isOvalModeActive) {
-            this.activateTool(this.props);
+        if (this.props.isRectModeActive) {
+            this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: RectModeProps) {
         if (this.tool && nextProps.colorState !== this.props.colorState) {
             this.tool.setColorState(nextProps.colorState);
         }
@@ -40,14 +60,14 @@ class OvalMode extends React.Component {
             this.tool.onSelectionChanged(nextProps.selectedItems);
         }
 
-        if (nextProps.isOvalModeActive && !this.props.isOvalModeActive) {
+        if (nextProps.isRectModeActive && !this.props.isRectModeActive) {
             this.activateTool();
-        } else if (!nextProps.isOvalModeActive && this.props.isOvalModeActive) {
+        } else if (!nextProps.isRectModeActive && this.props.isRectModeActive) {
             this.deactivateTool();
         }
     }
-    shouldComponentUpdate (nextProps) {
-        return nextProps.isOvalModeActive !== this.props.isOvalModeActive;
+    shouldComponentUpdate (nextProps: RectModeProps) {
+        return nextProps.isRectModeActive !== this.props.isRectModeActive;
     }
     componentWillUnmount () {
         if (this.tool) {
@@ -58,7 +78,7 @@ class OvalMode extends React.Component {
         clearSelection(this.props.clearSelectedItems);
         this.validateColorState();
 
-        this.tool = new OvalTool(
+        this.tool = new RectTool(
             this.props.setSelectedItems,
             this.props.clearSelectedItems,
             this.props.setCursor,
@@ -67,12 +87,7 @@ class OvalMode extends React.Component {
         this.tool.setColorState(this.props.colorState);
         this.tool.activate();
     }
-    deactivateTool () {
-        this.tool.deactivateTool();
-        this.tool.remove();
-        this.tool = null;
-    }
-    validateColorState () {
+    validateColorState () { // TODO move to shared class
         // Make sure that at least one of fill/stroke is set, and that MIXED is not one of the colors.
         // If fill and stroke color are both missing, set fill to default and stroke to transparent.
         // If exactly one of fill or stroke color is set, set the other one to transparent.
@@ -117,38 +132,24 @@ class OvalMode extends React.Component {
             this.props.clearStrokeGradient();
         }
     }
+    deactivateTool () {
+        this.tool.deactivateTool();
+        this.tool.remove();
+        this.tool = null;
+    }
     render () {
         return (
-            <OvalModeComponent
-                isSelected={this.props.isOvalModeActive}
+            <RectModeComponent
+                isSelected={this.props.isRectModeActive}
                 onMouseDown={this.props.handleMouseDown}
             />
         );
     }
 }
 
-OvalMode.propTypes = {
-    clearFillGradient: PropTypes.func.isRequired,
-    clearStrokeGradient: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    colorState: PropTypes.shape({
-        fillColor: ColorStyleProptype,
-        strokeColor: ColorStyleProptype,
-        strokeWidth: PropTypes.number
-    }).isRequired,
-    handleMouseDown: PropTypes.func.isRequired,
-    isOvalModeActive: PropTypes.bool.isRequired,
-    onChangeFillColor: PropTypes.func.isRequired,
-    onChangeStrokeColor: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    selectedItems: PropTypes.arrayOf(PropTypes.instanceOf(paper.Item)),
-    setCursor: PropTypes.func.isRequired,
-    setSelectedItems: PropTypes.func.isRequired
-};
-
 const mapStateToProps = state => ({
     colorState: state.scratchPaint.color,
-    isOvalModeActive: state.scratchPaint.mode === Modes.OVAL,
+    isRectModeActive: state.scratchPaint.mode === Modes.RECT,
     selectedItems: state.scratchPaint.selectedItems
 });
 const mapDispatchToProps = dispatch => ({
@@ -161,14 +162,14 @@ const mapDispatchToProps = dispatch => ({
     clearStrokeGradient: () => {
         dispatch(clearStrokeGradient());
     },
-    setCursor: cursorString => {
-        dispatch(setCursor(cursorString));
-    },
     setSelectedItems: () => {
         dispatch(setSelectedItems(getSelectedLeafItems(), false /* bitmapMode */));
     },
+    setCursor: cursorString => {
+        dispatch(setCursor(cursorString));
+    },
     handleMouseDown: () => {
-        dispatch(changeMode(Modes.OVAL));
+        dispatch(changeMode(Modes.RECT));
     },
     onChangeFillColor: fillColor => {
         dispatch(changeFillColor(fillColor));
@@ -181,4 +182,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(OvalMode);
+)(RectMode);

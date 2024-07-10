@@ -9,7 +9,7 @@ import {changeBitBrushSize} from '../../reducers/bit-brush-size';
 import {changeBitEraserSize} from '../../reducers/bit-eraser-size';
 import {setShapesFilled} from '../../reducers/fill-bitmap-shapes';
 
-import FontDropdown from '../../containers/font-dropdown.jsx';
+import FontDropdown from '../../containers/font-dropdown';
 import LiveInputHOC from '../forms/live-input-hoc.jsx';
 import Label from '../forms/label.jsx';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';

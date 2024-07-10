@@ -1,31 +1,76 @@
 import paper from '@scratch/paper';
-import PropTypes from 'prop-types';
-import log from '../log/log';
-import React from 'react';
+import log from '../log/log.js';
+import * as React from 'react';
 import {connect} from 'react-redux';
 
-import PaintEditorComponent from '../components/paint-editor/paint-editor.jsx';
+import PaintEditorComponent from '../components/paint-editor/paint-editor';
 import KeyboardShortcutsHOC from '../hocs/keyboard-shortcuts-hoc.jsx';
 import SelectionHOC from '../hocs/selection-hoc.jsx';
 import UndoHOC from '../hocs/undo-hoc.jsx';
 import UpdateImageHOC from '../hocs/update-image-hoc.jsx';
 
-import {changeMode} from '../reducers/modes';
-import {changeFormat} from '../reducers/format';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
-import {deactivateEyeDropper} from '../reducers/eye-dropper';
-import {setTextEditTarget} from '../reducers/text-edit-target';
-import {updateViewBounds} from '../reducers/view-bounds';
-import {setLayout} from '../reducers/layout';
+import {changeMode} from '../reducers/modes.js';
+import {changeFormat} from '../reducers/format.js';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
+import {deactivateEyeDropper} from '../reducers/eye-dropper.js';
+import {setTextEditTarget} from '../reducers/text-edit-target.js';
+import {updateViewBounds} from '../reducers/view-bounds.js';
+import {setLayout} from '../reducers/layout.js';
 
-import {getSelectedLeafItems} from '../helper/selection';
-import {convertToBitmap, convertToVector} from '../helper/bitmap';
-import {resetZoom, zoomOnSelection, OUTERMOST_ZOOM_LEVEL} from '../helper/view';
-import EyeDropperTool from '../helper/tools/eye-dropper';
+import {getSelectedLeafItems} from '../helper/selection.js';
+import {convertToBitmap, convertToVector} from '../helper/bitmap.js';
+import {resetZoom, zoomOnSelection, OUTERMOST_ZOOM_LEVEL} from '../helper/view.js';
+import EyeDropperTool from '../helper/tools/eye-dropper.js';
 
-import Modes, {BitmapModes, VectorModes} from '../lib/modes';
-import Formats, {isBitmap, isVector} from '../lib/format';
+import Modes, {BitmapModes, VectorModes} from '../lib/modes.js';
+import Formats, {isBitmap, isVector} from '../lib/format.js';
 import bindAll from 'lodash.bindall';
+
+interface PaintEditorProps {
+    changeColorToEyeDropper?: (color: string) => void;
+    changeMode: (mode: string) => void;
+    clearSelectedItems: () => void;
+    format: keyof typeof Formats; // Internal, up-to-date data format
+    fontInlineFn?: (fontFamily: string, fontWeight: string, isItalic: boolean) => string;
+    handleSwitchToBitmap: () => void;
+    handleSwitchToVector: () => void;
+    image?: string | HTMLImageElement;
+    imageFormat?: string; // The incoming image's data format, used during import
+    imageId?: string;
+    isEyeDropping?: boolean;
+    mode: keyof typeof Modes;
+    name?: string;
+    onDeactivateEyeDropper: () => void;
+    onKeyPress: (event: KeyboardEvent) => void;
+    onRedo: () => void;
+    onUndo: () => void;
+    onUpdateImage: (image: string | ImageData) => void;
+    onUpdateName: (name: string) => void;
+    previousTool: { // paper.Tool
+        activate: () => void;
+        remove: () => void;
+    };
+    removeTextEditTarget: () => void;
+    rotationCenterX?: number;
+    rotationCenterY?: number;
+    rtl: boolean;
+    setLayout: (layout: string) => void;
+    setSelectedItems: (format: string) => void;
+    shouldShowRedo: () => boolean;
+    shouldShowUndo: () => boolean;
+    updateViewBounds: (matrix: paper.Matrix) => void;
+    viewBounds: paper.Matrix;
+    zoomLevelId?: string;
+}
+
+interface PaintEditorState {
+    canvas: HTMLCanvasElement;
+    colorInfo: {
+        x: number;
+        y: number;
+    };
+    textArea?: HTMLTextAreaElement;
+}
 
 /**
  * The top-level paint editor component. See README for more details on usage.
@@ -68,11 +113,15 @@ import bindAll from 'lodash.bindall';
  * zoom level. When a new zoom level ID is encountered, the paint editor will zoom to
  * fit the current costume comfortably. Leave undefined to perform no zoom to fit.
  */
-class PaintEditor extends React.Component {
+class PaintEditor extends React.Component<PaintEditorProps, PaintEditorState> {
+    eyeDropper: EyeDropperTool;
+    canvas: HTMLCanvasElement;
+    intervalId?: ReturnType<typeof setInterval>;
+    
     static get ZOOM_INCREMENT () {
         return 0.5;
     }
-    constructor (props) {
+    constructor (props: PaintEditorProps) {
         super(props);
         bindAll(this, [
             'switchModeForFormat',
@@ -103,7 +152,7 @@ class PaintEditor extends React.Component {
         document.addEventListener('mouseup', this.onMouseUp);
         document.addEventListener('touchend', this.onMouseUp);
     }
-    componentWillReceiveProps (newProps) {
+    componentWillReceiveProps (newProps: PaintEditorProps) {
         if (!isBitmap(this.props.format) && isBitmap(newProps.format)) {
             this.switchModeForFormat(Formats.BITMAP);
         } else if (!isVector(this.props.format) && isVector(newProps.format)) {
@@ -113,7 +162,7 @@ class PaintEditor extends React.Component {
             this.props.setLayout(newProps.rtl ? 'rtl' : 'ltr');
         }
     }
-    componentDidUpdate (prevProps) {
+    componentDidUpdate (prevProps: PaintEditorProps) {
         if (this.props.isEyeDropping && !prevProps.isEyeDropping) {
             this.startEyeDroppingLoop();
         } else if (!this.props.isEyeDropping && prevProps.isEyeDropping) {
@@ -138,7 +187,7 @@ class PaintEditor extends React.Component {
         document.removeEventListener('mouseup', this.onMouseUp);
         document.removeEventListener('touchend', this.onMouseUp);
     }
-    switchModeForFormat (newFormat) {
+    switchModeForFormat (newFormat: keyof typeof Formats) {
         if ((isVector(newFormat) && (this.props.mode in VectorModes)) ||
             (isBitmap(newFormat) && (this.props.mode in BitmapModes))) {
             // Format didn't change; no mode change needed
@@ -232,14 +281,14 @@ class PaintEditor extends React.Component {
     handleSetSelectedItems () {
         this.props.setSelectedItems(this.props.format);
     }
-    setCanvas (canvas) {
+    setCanvas (canvas: HTMLCanvasElement) {
         this.setState({canvas: canvas});
         this.canvas = canvas;
     }
-    setTextArea (element) {
+    setTextArea (element: HTMLTextAreaElement) {
         this.setState({textArea: element});
     }
-    onMouseDown (event) {
+    onMouseDown (event: MouseEvent | TouchEvent) {
         if (event.target === paper.view.element &&
                 document.activeElement instanceof HTMLInputElement) {
             document.activeElement.blur();
@@ -336,46 +385,6 @@ class PaintEditor extends React.Component {
         );
     }
 }
-
-PaintEditor.propTypes = {
-    changeColorToEyeDropper: PropTypes.func,
-    changeMode: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    format: PropTypes.oneOf(Object.keys(Formats)), // Internal, up-to-date data format
-    fontInlineFn: PropTypes.func,
-    handleSwitchToBitmap: PropTypes.func.isRequired,
-    handleSwitchToVector: PropTypes.func.isRequired,
-    image: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.instanceOf(HTMLImageElement)
-    ]),
-    imageFormat: PropTypes.string, // The incoming image's data format, used during import
-    imageId: PropTypes.string,
-    isEyeDropping: PropTypes.bool,
-    mode: PropTypes.oneOf(Object.keys(Modes)).isRequired,
-    name: PropTypes.string,
-    onDeactivateEyeDropper: PropTypes.func.isRequired,
-    onKeyPress: PropTypes.func.isRequired,
-    onRedo: PropTypes.func.isRequired,
-    onUndo: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    onUpdateName: PropTypes.func.isRequired,
-    previousTool: PropTypes.shape({ // paper.Tool
-        activate: PropTypes.func.isRequired,
-        remove: PropTypes.func.isRequired
-    }),
-    removeTextEditTarget: PropTypes.func.isRequired,
-    rotationCenterX: PropTypes.number,
-    rotationCenterY: PropTypes.number,
-    rtl: PropTypes.bool,
-    setLayout: PropTypes.func.isRequired,
-    setSelectedItems: PropTypes.func.isRequired,
-    shouldShowRedo: PropTypes.func.isRequired,
-    shouldShowUndo: PropTypes.func.isRequired,
-    updateViewBounds: PropTypes.func.isRequired,
-    viewBounds: PropTypes.instanceOf(paper.Matrix).isRequired,
-    zoomLevelId: PropTypes.string
-};
 
 const mapStateToProps = state => ({
     changeColorToEyeDropper: state.scratchPaint.color.eyeDropper.callback,

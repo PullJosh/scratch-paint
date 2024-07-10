@@ -1,19 +1,31 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes';
+import Modes from '../lib/modes.js';
 
-import {changeMode} from '../reducers/modes';
-import {clearHoveredItem, setHoveredItem} from '../reducers/hover';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
+import {changeMode} from '../reducers/modes.js';
+import {clearHoveredItem, setHoveredItem} from '../reducers/hover.js';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
 
-import {getSelectedLeafItems} from '../helper/selection';
-import RoundedRectTool from '../helper/tools/rounded-rect-tool';
+import {getSelectedLeafItems} from '../helper/selection.js';
+import RoundedRectTool from '../helper/tools/rounded-rect-tool.js';
 import RoundedRectModeComponent from '../components/rounded-rect-mode/rounded-rect-mode.jsx';
 
-class RoundedRectMode extends React.Component {
-    constructor (props) {
+interface RoundedRectModeProps {
+    clearHoveredItem: () => void;
+    clearSelectedItems: () => void;
+    handleMouseDown: () => void;
+    hoveredItemId?: number;
+    isRoundedRectModeActive: boolean;
+    onUpdateImage: () => void;
+    setHoveredItem: (hoveredItemId: number) => void;
+    setSelectedItems: () => void;
+}
+
+class RoundedRectMode extends React.Component<RoundedRectModeProps> {
+    tool: RoundedRectTool;
+    
+    constructor (props: RoundedRectModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -22,10 +34,10 @@ class RoundedRectMode extends React.Component {
     }
     componentDidMount () {
         if (this.props.isRoundedRectModeActive) {
-            this.activateTool(this.props);
+            this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: RoundedRectModeProps) {
         if (this.tool && nextProps.hoveredItemId !== this.props.hoveredItemId) {
             this.tool.setPrevHoveredItemId(nextProps.hoveredItemId);
         }
@@ -36,7 +48,7 @@ class RoundedRectMode extends React.Component {
             this.deactivateTool();
         }
     }
-    shouldComponentUpdate (nextProps) {
+    shouldComponentUpdate (nextProps: RoundedRectModeProps) {
         return nextProps.isRoundedRectModeActive !== this.props.isRoundedRectModeActive;
     }
     componentWillUnmount () {
@@ -68,17 +80,6 @@ class RoundedRectMode extends React.Component {
         );
     }
 }
-
-RoundedRectMode.propTypes = {
-    clearHoveredItem: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    handleMouseDown: PropTypes.func.isRequired,
-    hoveredItemId: PropTypes.number,
-    isRoundedRectModeActive: PropTypes.bool.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    setHoveredItem: PropTypes.func.isRequired,
-    setSelectedItems: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     isRoundedRectModeActive: state.scratchPaint.mode === Modes.ROUNDED_RECT,

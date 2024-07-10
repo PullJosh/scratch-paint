@@ -1,18 +1,27 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes';
+import Modes from '../lib/modes.js';
 
-import {changeMode} from '../reducers/modes';
-import {clearSelectedItems} from '../reducers/selected-items';
-import {clearSelection} from '../helper/selection';
+import {changeMode} from '../reducers/modes.js';
+import {clearSelectedItems} from '../reducers/selected-items.js';
+import {clearSelection} from '../helper/selection.js';
 
 import BitEraserModeComponent from '../components/bit-eraser-mode/bit-eraser-mode.jsx';
-import BitBrushTool from '../helper/bit-tools/brush-tool';
+import BitBrushTool from '../helper/bit-tools/brush-tool.js';
 
-class BitEraserMode extends React.Component {
-    constructor (props) {
+interface BitEraserModeProps {
+    bitEraserSize: number;
+    clearSelectedItems: () => void;
+    handleMouseDown: () => void;
+    isBitEraserModeActive: boolean;
+    onUpdateImage: (image: ImageData) => void;
+}
+
+class BitEraserMode extends React.Component<BitEraserModeProps> {
+    tool: BitBrushTool;
+    
+    constructor (props: BitEraserModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -21,10 +30,10 @@ class BitEraserMode extends React.Component {
     }
     componentDidMount () {
         if (this.props.isBitEraserModeActive) {
-            this.activateTool(this.props);
+            this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: BitEraserModeProps) {
         if (this.tool && nextProps.bitEraserSize !== this.props.bitEraserSize) {
             this.tool.setBrushSize(nextProps.bitEraserSize);
         }
@@ -35,7 +44,7 @@ class BitEraserMode extends React.Component {
             this.deactivateTool();
         }
     }
-    shouldComponentUpdate (nextProps) {
+    shouldComponentUpdate (nextProps: BitEraserModeProps) {
         return nextProps.isBitEraserModeActive !== this.props.isBitEraserModeActive;
     }
     componentWillUnmount () {
@@ -67,14 +76,6 @@ class BitEraserMode extends React.Component {
         );
     }
 }
-
-BitEraserMode.propTypes = {
-    bitEraserSize: PropTypes.number.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    handleMouseDown: PropTypes.func.isRequired,
-    isBitEraserModeActive: PropTypes.bool.isRequired,
-    onUpdateImage: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     bitEraserSize: state.scratchPaint.bitEraserSize,

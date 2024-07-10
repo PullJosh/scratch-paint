@@ -1,23 +1,39 @@
 import paper from '@scratch/paper';
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes';
-import ColorStyleProptype from '../lib/color-style-proptype';
-import {MIXED} from '../helper/style-path';
+import Modes from '../lib/modes.js';
+import ColorStyleProptype from '../lib/color-style-proptype.js';
+import {MIXED} from '../helper/style-path.js';
 
-import {changeFillColor, DEFAULT_COLOR} from '../reducers/fill-style';
-import {changeMode} from '../reducers/modes';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
-import {setCursor} from '../reducers/cursor';
+import {changeFillColor, DEFAULT_COLOR} from '../reducers/fill-style.js';
+import {changeMode} from '../reducers/modes.js';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
+import {setCursor} from '../reducers/cursor.js';
 
-import {clearSelection, getSelectedLeafItems} from '../helper/selection';
-import OvalTool from '../helper/bit-tools/oval-tool';
+import {clearSelection, getSelectedLeafItems} from '../helper/selection.js';
+import OvalTool from '../helper/bit-tools/oval-tool.js';
 import OvalModeComponent from '../components/bit-oval-mode/bit-oval-mode.jsx';
 
-class BitOvalMode extends React.Component {
-    constructor (props) {
+interface BitOvalModeProps {
+    clearSelectedItems: () => void;
+    color: any; // TODO: This used to be `ColorStyleProptype`
+    filled?: boolean;
+    handleMouseDown: () => void;
+    isOvalModeActive: boolean;
+    onChangeFillColor: (fillColor: any) => void;
+    onUpdateImage: () => void;
+    selectedItems?: paper.Item[];
+    setCursor: (cursorString: string) => void;
+    setSelectedItems: () => void;
+    thickness: number;
+    zoom: number;
+}
+
+class BitOvalMode extends React.Component<BitOvalModeProps> {
+    tool: OvalTool;
+    
+    constructor (props: BitOvalModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -26,10 +42,10 @@ class BitOvalMode extends React.Component {
     }
     componentDidMount () {
         if (this.props.isOvalModeActive) {
-            this.activateTool(this.props);
+            this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: BitOvalModeProps) {
         if (this.tool) {
             if (nextProps.color !== this.props.color) {
                 this.tool.setColor(nextProps.color);
@@ -52,7 +68,7 @@ class BitOvalMode extends React.Component {
             this.deactivateTool();
         }
     }
-    shouldComponentUpdate (nextProps) {
+    shouldComponentUpdate (nextProps: BitOvalModeProps) {
         return nextProps.isOvalModeActive !== this.props.isOvalModeActive;
     }
     componentWillUnmount () {
@@ -92,21 +108,6 @@ class BitOvalMode extends React.Component {
         );
     }
 }
-
-BitOvalMode.propTypes = {
-    clearSelectedItems: PropTypes.func.isRequired,
-    color: ColorStyleProptype,
-    filled: PropTypes.bool,
-    handleMouseDown: PropTypes.func.isRequired,
-    isOvalModeActive: PropTypes.bool.isRequired,
-    onChangeFillColor: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    selectedItems: PropTypes.arrayOf(PropTypes.instanceOf(paper.Item)),
-    setCursor: PropTypes.func.isRequired,
-    setSelectedItems: PropTypes.func.isRequired,
-    thickness: PropTypes.number.isRequired,
-    zoom: PropTypes.number.isRequired
-};
 
 const mapStateToProps = state => ({
     color: state.scratchPaint.color.fillColor,

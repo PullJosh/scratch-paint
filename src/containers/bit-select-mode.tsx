@@ -1,21 +1,33 @@
 import paper from '@scratch/paper';
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes';
+import Modes from '../lib/modes.js';
 
-import {clearFillGradient} from '../reducers/fill-style';
-import {changeMode} from '../reducers/modes';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
-import {setCursor} from '../reducers/cursor';
+import {clearFillGradient} from '../reducers/fill-style.js';
+import {changeMode} from '../reducers/modes.js';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
+import {setCursor} from '../reducers/cursor.js';
 
-import {getSelectedLeafItems} from '../helper/selection';
-import BitSelectTool from '../helper/bit-tools/select-tool';
+import {getSelectedLeafItems} from '../helper/selection.js';
+import BitSelectTool from '../helper/bit-tools/select-tool.js';
 import SelectModeComponent from '../components/bit-select-mode/bit-select-mode.jsx';
 
-class BitSelectMode extends React.Component {
-    constructor (props) {
+interface BitSelectModeProps {
+    clearGradient: () => void;
+    clearSelectedItems: () => void;
+    handleMouseDown: () => void;
+    isSelectModeActive: boolean;
+    onUpdateImage: () => void;
+    selectedItems?: paper.Item[];
+    setCursor: (cursorString: string) => void;
+    setSelectedItems: () => void;
+}
+
+class BitSelectMode extends React.Component<BitSelectModeProps> {
+    tool: BitSelectTool;
+    
+    constructor (props: BitSelectModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -24,10 +36,10 @@ class BitSelectMode extends React.Component {
     }
     componentDidMount () {
         if (this.props.isSelectModeActive) {
-            this.activateTool(this.props);
+            this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: BitSelectModeProps) {
         if (this.tool && nextProps.selectedItems !== this.props.selectedItems) {
             this.tool.onSelectionChanged(nextProps.selectedItems);
         }
@@ -38,7 +50,7 @@ class BitSelectMode extends React.Component {
             this.deactivateTool();
         }
     }
-    shouldComponentUpdate (nextProps) {
+    shouldComponentUpdate (nextProps: BitSelectModeProps) {
         return nextProps.isSelectModeActive !== this.props.isSelectModeActive;
     }
     componentWillUnmount () {
@@ -70,17 +82,6 @@ class BitSelectMode extends React.Component {
         );
     }
 }
-
-BitSelectMode.propTypes = {
-    clearGradient: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    handleMouseDown: PropTypes.func.isRequired,
-    isSelectModeActive: PropTypes.bool.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    selectedItems: PropTypes.arrayOf(PropTypes.instanceOf(paper.Item)),
-    setCursor: PropTypes.func.isRequired,
-    setSelectedItems: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     isSelectModeActive: state.scratchPaint.mode === Modes.BIT_SELECT,

@@ -1,17 +1,27 @@
 import paper from '@scratch/paper';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import FontDropdownComponent from '../components/font-dropdown/font-dropdown.jsx';
-import Fonts from '../lib/fonts';
-import {changeFont} from '../reducers/font';
-import {getSelectedLeafItems} from '../helper/selection';
+import Fonts from '../lib/fonts.js';
+import {changeFont} from '../reducers/font.js';
+import {getSelectedLeafItems} from '../helper/selection.js';
 import styles from '../components/font-dropdown/font-dropdown.css';
+import Dropdown from '../components/dropdown/dropdown.jsx';
 
-class FontDropdown extends React.Component {
-    constructor (props) {
+interface FontDropdownProps {
+    changeFont: (font: string) => void;
+    font?: string;
+    onUpdateImage: () => void;
+}
+
+class FontDropdown extends React.Component<FontDropdownProps> {
+    dropDown: Dropdown;
+    savedFont: string;
+    savedSelection: paper.Item[];
+    
+    constructor (props: FontDropdownProps) {
         super(props);
         bindAll(this, [
             'getFontStyle',
@@ -31,7 +41,7 @@ class FontDropdown extends React.Component {
             'handleChoose'
         ]);
     }
-    getFontStyle (font) {
+    getFontStyle (font: string) {
         switch (font) {
         case Fonts.SERIF:
             return styles.serif;
@@ -55,7 +65,7 @@ class FontDropdown extends React.Component {
             return '';
         }
     }
-    getFontName (font) {
+    getFontName (font: string) {
         switch (font) {
         case Fonts.CHINESE:
             return '中文';
@@ -122,7 +132,7 @@ class FontDropdown extends React.Component {
         this.savedFont = this.props.font;
         this.savedSelection = getSelectedLeafItems();
     }
-    handleClickOutsideDropdown (e) {
+    handleClickOutsideDropdown (e: Event) {
         e.stopPropagation();
         this.dropDown.handleClosePopover();
 
@@ -137,7 +147,7 @@ class FontDropdown extends React.Component {
         this.savedFont = null;
         this.savedSelection = null;
     }
-    setDropdown (element) {
+    setDropdown (element: Dropdown) {
         this.dropDown = element;
     }
     render () {
@@ -163,12 +173,6 @@ class FontDropdown extends React.Component {
         );
     }
 }
-
-FontDropdown.propTypes = {
-    changeFont: PropTypes.func.isRequired,
-    font: PropTypes.string,
-    onUpdateImage: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     font: state.scratchPaint.font

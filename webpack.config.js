@@ -68,6 +68,9 @@ const base = {
             }]
         }]
     },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.jsx', '.js']
+    },
     optimization: {
         minimizer: [
             new TerserPlugin({
@@ -87,7 +90,7 @@ module.exports = [
             port: process.env.PORT || 8078
         },
         entry: {
-            playground: './src/playground/playground.jsx'
+            playground: './src/playground/playground.tsx'
         },
         output: {
             path: path.resolve(__dirname, 'playground'),

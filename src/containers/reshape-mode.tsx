@@ -1,19 +1,32 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes';
+import Modes from '../lib/modes.js';
 
-import {changeMode} from '../reducers/modes';
-import {clearHoveredItem, setHoveredItem} from '../reducers/hover';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
-import {getSelectedLeafItems} from '../helper/selection';
+import {changeMode} from '../reducers/modes.js';
+import {clearHoveredItem, setHoveredItem} from '../reducers/hover.js';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
+import {getSelectedLeafItems} from '../helper/selection.js';
 
-import ReshapeTool from '../helper/selection-tools/reshape-tool';
+import ReshapeTool from '../helper/selection-tools/reshape-tool.js';
 import ReshapeModeComponent from '../components/reshape-mode/reshape-mode.jsx';
 
-class ReshapeMode extends React.Component {
-    constructor (props) {
+interface ReshapeModeProps {
+    clearHoveredItem: () => void;
+    clearSelectedItems: () => void;
+    handleMouseDown: () => void;
+    hoveredItemId?: number;
+    isReshapeModeActive: boolean;
+    onUpdateImage: () => void;
+    setHoveredItem: (hoveredItemId: number) => void;
+    setSelectedItems: () => void;
+    switchToTextTool: () => void;
+}
+
+class ReshapeMode extends React.Component<ReshapeModeProps> {
+    tool: ReshapeTool;
+    
+    constructor (props: ReshapeModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -22,10 +35,10 @@ class ReshapeMode extends React.Component {
     }
     componentDidMount () {
         if (this.props.isReshapeModeActive) {
-            this.activateTool(this.props);
+            this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: ReshapeModeProps) {
         if (this.tool && nextProps.hoveredItemId !== this.props.hoveredItemId) {
             this.tool.setPrevHoveredItemId(nextProps.hoveredItemId);
         }
@@ -36,7 +49,7 @@ class ReshapeMode extends React.Component {
             this.deactivateTool();
         }
     }
-    shouldComponentUpdate (nextProps) {
+    shouldComponentUpdate (nextProps: ReshapeModeProps) {
         return nextProps.isReshapeModeActive !== this.props.isReshapeModeActive;
     }
     componentWillUnmount () {
@@ -71,18 +84,6 @@ class ReshapeMode extends React.Component {
         );
     }
 }
-
-ReshapeMode.propTypes = {
-    clearHoveredItem: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    handleMouseDown: PropTypes.func.isRequired,
-    hoveredItemId: PropTypes.number,
-    isReshapeModeActive: PropTypes.bool.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    setHoveredItem: PropTypes.func.isRequired,
-    setSelectedItems: PropTypes.func.isRequired,
-    switchToTextTool: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     isReshapeModeActive: state.scratchPaint.mode === Modes.RESHAPE,

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Popover from 'react-popover';
 
 import ColorButton from './color-button/color-button.jsx';
-import ColorPicker from '../containers/color-picker.jsx';
+import ColorPicker from '../containers/color-picker';
 import InputGroup from './input-group/input-group.jsx';
 import Label from './forms/label.jsx';
 

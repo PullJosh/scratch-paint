@@ -1,5 +1,4 @@
 import bindAll from 'lodash.bindall';
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import paper from '@scratch/paper';
@@ -24,8 +23,37 @@ import {saveZoomLevel, setZoomLevelId} from '../reducers/zoom-levels';
 
 import styles from './paper-canvas.css';
 
-class PaperCanvas extends React.Component {
-    constructor (props) {
+interface PaperCanvasProps {
+    canvasRef: (canvas: HTMLCanvasElement) => void;
+    changeFormat: (format: string) => void;
+    clearHoveredItem: () => void;
+    clearPasteOffset: () => void;
+    clearSelectedItems: () => void;
+    clearUndo: () => void;
+    cursor?: string;
+    format?: keyof typeof Formats;
+    image?: string | HTMLImageElement;
+    imageFormat?: string; // The incoming image's data format, used during import. The user could switch this.
+    imageId?: string;
+    rotationCenterX?: number;
+    rotationCenterY?: number;
+    saveZoomLevel: () => void;
+    setZoomLevelId: (zoomLevelId: string) => void;
+    undoSnapshot: (snapshot: any) => void;
+    updateViewBounds: (matrix: paper.Matrix) => void;
+    zoomLevelId?: string;
+    zoomLevels?: { // TODO: This type is confusing. The original proptype was `PropTypes.shape({ currentZoomLevelId: PropTypes.string })` but it feels like it should be a map between ids and zoom levels
+        currentZoomLevelId?: string;
+    };
+}
+
+class PaperCanvas extends React.Component<PaperCanvasProps> {
+    canvas: HTMLCanvasElement;
+    shouldZoomToFit: boolean | paper.Matrix;
+    queuedImport?: ReturnType<typeof window.setTimeout>;
+    queuedImageToLoad?: HTMLImageElement;
+
+    constructor (props: PaperCanvasProps) {
         super(props);
         bindAll(this, [
             'clearQueuedImport',
@@ -56,6 +84,7 @@ class PaperCanvas extends React.Component {
         }
 
         const context = this.canvas.getContext('2d');
+        // @ts-expect-error TypeScript doesn't type the webkit-specific property
         context.webkitImageSmoothingEnabled = false;
         context.imageSmoothingEnabled = false;
 
@@ -66,7 +95,7 @@ class PaperCanvas extends React.Component {
         this.importImage(
             this.props.imageFormat, this.props.image, this.props.rotationCenterX, this.props.rotationCenterY);
     }
-    componentWillReceiveProps (newProps) {
+    componentWillReceiveProps (newProps: PaperCanvasProps) {
         if (this.props.imageId !== newProps.imageId) {
             this.switchCostume(newProps.imageFormat, newProps.image,
                 newProps.rotationCenterX, newProps.rotationCenterY,
@@ -96,7 +125,14 @@ class PaperCanvas extends React.Component {
             this.queuedImageToLoad = null;
         }
     }
-    switchCostume (format, image, rotationCenterX, rotationCenterY, oldZoomLevelId, newZoomLevelId) {
+    switchCostume (
+        format: string,
+        image: string | HTMLImageElement,
+        rotationCenterX?: number,
+        rotationCenterY?: number,
+        oldZoomLevelId?: string,
+        newZoomLevelId?: string
+    ) {
         if (oldZoomLevelId && oldZoomLevelId !== newZoomLevelId) {
             this.props.saveZoomLevel();
         }
@@ -123,7 +159,12 @@ class PaperCanvas extends React.Component {
         this.props.clearPasteOffset();
         this.importImage(format, image, rotationCenterX, rotationCenterY);
     }
-    importImage (format, image, rotationCenterX, rotationCenterY) {
+    importImage (
+        format?: string,
+        image?: string | HTMLImageElement,
+        rotationCenterX?: number,
+        rotationCenterY?: number
+    ) {
         // Stop any in-progress imports
         this.clearQueuedImport();
 
@@ -181,7 +222,7 @@ class PaperCanvas extends React.Component {
             this.recalibrateSize();
         }
     }
-    maybeZoomToFit (isBitmapMode) {
+    maybeZoomToFit (isBitmapMode: boolean) {
         if (this.shouldZoomToFit instanceof paper.Matrix) {
             paper.view.matrix = this.shouldZoomToFit;
             this.props.updateViewBounds(paper.view.matrix);
@@ -193,7 +234,7 @@ class PaperCanvas extends React.Component {
         setWorkspaceBounds();
         this.props.updateViewBounds(paper.view.matrix);
     }
-    importSvg (svg, rotationCenterX, rotationCenterY) {
+    importSvg (svg: string, rotationCenterX: number, rotationCenterY: number) {
         const paperCanvas = this;
         // Pre-process SVG to prevent parsing errors (discussion from #213)
         // 1. Remove svg: namespace on elements.
@@ -222,7 +263,7 @@ class PaperCanvas extends React.Component {
 
         paper.project.importSVG(svg, {
             expandShapes: true,
-            onLoad: function (item) {
+            onLoad: function (item: paper.Item) {
                 if (!item) {
                     log.error('SVG import failed:');
                     log.info(svg);
@@ -241,7 +282,7 @@ class PaperCanvas extends React.Component {
             }
         });
     }
-    initializeSvg (item, rotationCenterX, rotationCenterY, viewBox) {
+    initializeSvg (item: paper.Item, rotationCenterX: number, rotationCenterY: number, viewBox) {
         if (this.queuedImport) this.queuedImport = null;
         const itemWidth = item.bounds.width;
         const itemHeight = item.bounds.height;
@@ -301,7 +342,7 @@ class PaperCanvas extends React.Component {
         }
 
         performSnapshot(this.props.undoSnapshot, Formats.VECTOR_SKIP_CONVERT);
-        this.maybeZoomToFit();
+        this.maybeZoomToFit(false);
     }
     onViewResize () {
         setWorkspaceBounds(true /* clipEmpty */);
@@ -310,7 +351,7 @@ class PaperCanvas extends React.Component {
         this.recalibrateSize();
         this.props.updateViewBounds(paper.view.matrix);
     }
-    recalibrateSize (callback) {
+    recalibrateSize (callback?: () => void) {
         // Sets the size that Paper thinks the canvas is to the size the canvas element actually is.
         // When these are out of sync, the mouse events in the paint editor don't line up correctly.
         return window.setTimeout(() => {
@@ -328,7 +369,7 @@ class PaperCanvas extends React.Component {
             if (callback) callback();
         }, 0);
     }
-    setCanvas (canvas) {
+    setCanvas (canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         if (this.props.canvasRef) {
             this.props.canvasRef(canvas);
@@ -346,32 +387,6 @@ class PaperCanvas extends React.Component {
     }
 }
 
-PaperCanvas.propTypes = {
-    canvasRef: PropTypes.func,
-    changeFormat: PropTypes.func.isRequired,
-    clearHoveredItem: PropTypes.func.isRequired,
-    clearPasteOffset: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    clearUndo: PropTypes.func.isRequired,
-    cursor: PropTypes.string,
-    format: PropTypes.oneOf(Object.keys(Formats)),
-    image: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.instanceOf(HTMLImageElement)
-    ]),
-    imageFormat: PropTypes.string, // The incoming image's data format, used during import. The user could switch this.
-    imageId: PropTypes.string,
-    rotationCenterX: PropTypes.number,
-    rotationCenterY: PropTypes.number,
-    saveZoomLevel: PropTypes.func.isRequired,
-    setZoomLevelId: PropTypes.func.isRequired,
-    undoSnapshot: PropTypes.func.isRequired,
-    updateViewBounds: PropTypes.func.isRequired,
-    zoomLevelId: PropTypes.string,
-    zoomLevels: PropTypes.shape({
-        currentZoomLevelId: PropTypes.string
-    })
-};
 const mapStateToProps = state => ({
     mode: state.scratchPaint.mode,
     cursor: state.scratchPaint.cursor,

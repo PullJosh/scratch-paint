@@ -1,21 +1,36 @@
 import paper from '@scratch/paper';
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes';
+import Modes from '../lib/modes.js';
 
-import {changeMode} from '../reducers/modes';
-import {clearHoveredItem, setHoveredItem} from '../reducers/hover';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
-import {setCursor} from '../reducers/cursor';
+import {changeMode} from '../reducers/modes.js';
+import {clearHoveredItem, setHoveredItem} from '../reducers/hover.js';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
+import {setCursor} from '../reducers/cursor.js';
 
-import {getSelectedLeafItems} from '../helper/selection';
-import SelectTool from '../helper/selection-tools/select-tool';
+import {getSelectedLeafItems} from '../helper/selection.js';
+import SelectTool from '../helper/selection-tools/select-tool.js';
 import SelectModeComponent from '../components/select-mode/select-mode.jsx';
 
-class SelectMode extends React.Component {
-    constructor (props) {
+interface SelectModeProps {
+    clearHoveredItem: () => void;
+    clearSelectedItems: () => void;
+    handleMouseDown: () => void;
+    hoveredItemId?: number;
+    isSelectModeActive: boolean;
+    onUpdateImage: () => void;
+    selectedItems?: paper.Item[];
+    setCursor: (cursorString: string) => void;
+    setHoveredItem: (hoveredItemId: number) => void;
+    setSelectedItems: () => void;
+    switchToTextTool: () => void;
+}
+
+class SelectMode extends React.Component<SelectModeProps> {
+    tool: SelectTool;
+    
+    constructor (props: SelectModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -24,10 +39,10 @@ class SelectMode extends React.Component {
     }
     componentDidMount () {
         if (this.props.isSelectModeActive) {
-            this.activateTool(this.props);
+            this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: SelectModeProps) {
         if (this.tool && nextProps.hoveredItemId !== this.props.hoveredItemId) {
             this.tool.setPrevHoveredItemId(nextProps.hoveredItemId);
         }
@@ -41,7 +56,7 @@ class SelectMode extends React.Component {
             this.deactivateTool();
         }
     }
-    shouldComponentUpdate (nextProps) {
+    shouldComponentUpdate (nextProps: SelectModeProps) {
         return nextProps.isSelectModeActive !== this.props.isSelectModeActive;
     }
     componentWillUnmount () {
@@ -75,20 +90,6 @@ class SelectMode extends React.Component {
         );
     }
 }
-
-SelectMode.propTypes = {
-    clearHoveredItem: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
-    handleMouseDown: PropTypes.func.isRequired,
-    hoveredItemId: PropTypes.number,
-    isSelectModeActive: PropTypes.bool.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    selectedItems: PropTypes.arrayOf(PropTypes.instanceOf(paper.Item)),
-    setCursor: PropTypes.func.isRequired,
-    setHoveredItem: PropTypes.func.isRequired,
-    setSelectedItems: PropTypes.func.isRequired,
-    switchToTextTool: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
     isSelectModeActive: state.scratchPaint.mode === Modes.SELECT,

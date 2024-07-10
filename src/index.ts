@@ -1,4 +1,4 @@
-import PaintEditor from './containers/paint-editor.jsx';
+import PaintEditor from './containers/paint-editor';
 import ScratchPaintReducer from './reducers/scratch-paint-reducer.js';
 
 export {

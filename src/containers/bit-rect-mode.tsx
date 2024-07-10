@@ -1,23 +1,39 @@
 import paper from '@scratch/paper';
-import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes';
-import ColorStyleProptype from '../lib/color-style-proptype';
-import {MIXED} from '../helper/style-path';
+import Modes from '../lib/modes.js';
+import ColorStyleProptype from '../lib/color-style-proptype.js';
+import {MIXED} from '../helper/style-path.js';
 
-import {changeFillColor, DEFAULT_COLOR} from '../reducers/fill-style';
-import {changeMode} from '../reducers/modes';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
-import {setCursor} from '../reducers/cursor';
+import {changeFillColor, DEFAULT_COLOR} from '../reducers/fill-style.js';
+import {changeMode} from '../reducers/modes.js';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
+import {setCursor} from '../reducers/cursor.js';
 
-import {clearSelection, getSelectedLeafItems} from '../helper/selection';
-import RectTool from '../helper/bit-tools/rect-tool';
+import {clearSelection, getSelectedLeafItems} from '../helper/selection.js';
+import RectTool from '../helper/bit-tools/rect-tool.js';
 import RectModeComponent from '../components/bit-rect-mode/bit-rect-mode.jsx';
 
-class BitRectMode extends React.Component {
-    constructor (props) {
+interface BitRectModeProps {
+    clearSelectedItems: () => void;
+    color: any; // TODO: This used to be `ColorStyleProptype`
+    filled?: boolean;
+    handleMouseDown: () => void;
+    isRectModeActive: boolean;
+    onChangeFillColor: (fillColor: any) => void;
+    onUpdateImage: () => void;
+    selectedItems?: paper.Item[];
+    setCursor: (cursorString: string) => void;
+    setSelectedItems: () => void;
+    thickness: number;
+    zoom: number;
+}
+
+class BitRectMode extends React.Component<BitRectModeProps> {
+    tool: RectTool;
+    
+    constructor (props: BitRectModeProps) {
         super(props);
         bindAll(this, [
             'activateTool',
@@ -26,10 +42,10 @@ class BitRectMode extends React.Component {
     }
     componentDidMount () {
         if (this.props.isRectModeActive) {
-            this.activateTool(this.props);
+            this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps) {
+    componentWillReceiveProps (nextProps: BitRectModeProps) {
         if (this.tool) {
             if (nextProps.color !== this.props.color) {
                 this.tool.setColor(nextProps.color);
@@ -52,7 +68,7 @@ class BitRectMode extends React.Component {
             this.deactivateTool();
         }
     }
-    shouldComponentUpdate (nextProps) {
+    shouldComponentUpdate (nextProps: BitRectModeProps) {
         return nextProps.isRectModeActive !== this.props.isRectModeActive;
     }
     componentWillUnmount () {
@@ -92,21 +108,6 @@ class BitRectMode extends React.Component {
         );
     }
 }
-
-BitRectMode.propTypes = {
-    clearSelectedItems: PropTypes.func.isRequired,
-    color: ColorStyleProptype,
-    filled: PropTypes.bool,
-    handleMouseDown: PropTypes.func.isRequired,
-    isRectModeActive: PropTypes.bool.isRequired,
-    onChangeFillColor: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired,
-    selectedItems: PropTypes.arrayOf(PropTypes.instanceOf(paper.Item)),
-    setCursor: PropTypes.func.isRequired,
-    setSelectedItems: PropTypes.func.isRequired,
-    thickness: PropTypes.number.isRequired,
-    zoom: PropTypes.number.isRequired
-};
 
 const mapStateToProps = state => ({
     color: state.scratchPaint.color.fillColor,
