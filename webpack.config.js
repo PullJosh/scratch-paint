@@ -15,7 +15,7 @@ const base = {
     devtool: 'cheap-module-source-map',
     module: {
         rules: [{
-            test: /\.jsx?$/,
+            test: /\.(jsx?|tsx?)$/,
             loader: 'babel-loader',
             include: path.resolve(__dirname, 'src'),
             options: {
@@ -23,6 +23,7 @@ const base = {
                 presets: [
                     ['@babel/preset-env', {
                         targets: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}],
+                    '@babel/preset-typescript',
                     '@babel/preset-react']
             }
         },
@@ -116,7 +117,7 @@ module.exports = [
             'redux': 'redux'
         },
         entry: {
-            'scratch-paint': './src/index.js'
+            'scratch-paint': './src/index.ts'
         },
         output: {
             library: {
