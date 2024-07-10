@@ -3,7 +3,7 @@ const path = require('path');
 
 // Plugins
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 // PostCss
 const autoprefixer = require('autoprefixer');
@@ -59,12 +59,17 @@ const base = {
         },
         {
             test: /\.svg$/,
-            loader: 'svg-url-loader?noquotes'
+            use: [{
+                loader: 'svg-url-loader',
+                options: {
+                    noquotes: true
+                }
+            }]
         }]
     },
     optimization: {
         minimizer: [
-            new UglifyJsPlugin({
+            new TerserPlugin({
                 include: /\.min\.js$/
             })
         ]
@@ -76,7 +81,7 @@ module.exports = [
     // For the playground
     defaultsDeep({}, base, {
         devServer: {
-            contentBase: path.resolve(__dirname, 'playground'),
+            static: path.resolve(__dirname, 'playground'),
             host: '0.0.0.0',
             port: process.env.PORT || 8078
         },
@@ -114,9 +119,9 @@ module.exports = [
             'scratch-paint': './src/index.js'
         },
         output: {
-            path: path.resolve(__dirname, 'dist'),
-            filename: '[name].js',
-            libraryTarget: 'commonjs2'
+            library: {
+                type: 'commonjs2'
+            }
         }
     })
 ];
