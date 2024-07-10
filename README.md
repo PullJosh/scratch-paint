@@ -47,7 +47,7 @@ npm run build
 npm start
 ```
 
-Then go to [http://localhost:8078/playground/](http://localhost:8078/playground/). 8078 is BLOB upside-down. The True Name of this repo is scratch-blobs.
+Then go to [http://localhost:8078/](http://localhost:8078/). 8078 is BLOB upside-down. The True Name of this repo is scratch-blobs.
 
 *(Note that the `npm run build` step above seems like it's only necessary for some user and environments, and not others; check for yourself if the server that `npm start` starts is hot-reloading correctly.)*
 

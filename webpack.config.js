@@ -34,7 +34,7 @@ const base = {
                 loader: 'css-loader',
                 options: {
                     modules: {
-                        localIdentName: '[name]_[local]_[hash:base64:5]'
+                        localIdentName: '[name]_[local]_[contenthash:base64:5]'
                     },
                     importLoaders: 1,
                     localsConvention: 'camelCase'
