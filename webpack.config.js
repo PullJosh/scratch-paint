@@ -4,6 +4,7 @@ const path = require('path');
 // Plugins
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const {EnvironmentPlugin} = require('webpack');
 
 // PostCss
 const autoprefixer = require('autoprefixer');
@@ -78,7 +79,12 @@ const base = {
             })
         ]
     },
-    plugins: []
+    plugins: [
+        new EnvironmentPlugin({
+            NODE_ENV: 'development',
+            DEBUG: false
+        })
+    ]
 };
 
 module.exports = [
