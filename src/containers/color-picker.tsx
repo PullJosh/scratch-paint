@@ -80,11 +80,11 @@ class ColorPicker extends React.Component<ColorPickerProps, ColorPickerState> {
             brightness: hsv[2]
         };
     }
-    componentWillReceiveProps (newProps: ColorPickerProps) {
-        const color = newProps.colorIndex === 0 ? this.props.color : this.props.color2;
-        const newColor = newProps.colorIndex === 0 ? newProps.color : newProps.color2;
-        const colorSetByEyedropper = this.props.isEyeDropping && color !== newColor;
-        if (colorSetByEyedropper || this.props.colorIndex !== newProps.colorIndex) {
+    componentDidUpdate(prevProps: Readonly<ColorPickerProps>, prevState: Readonly<ColorPickerState>) {
+        const color = this.props.colorIndex === 0 ? prevProps.color : prevProps.color2;
+        const newColor = this.props.colorIndex === 0 ? this.props.color : this.props.color2;
+        const colorSetByEyedropper = prevProps.isEyeDropping && color !== newColor;
+        if (colorSetByEyedropper || prevProps.colorIndex !== this.props.colorIndex) {
             const hsv = this.getHsv(newColor);
             this.setState({
                 hue: hsv[0],

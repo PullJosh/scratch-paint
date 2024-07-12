@@ -42,22 +42,26 @@ class SelectMode extends React.Component<SelectModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: SelectModeProps) {
-        if (this.tool && nextProps.hoveredItemId !== this.props.hoveredItemId) {
-            this.tool.setPrevHoveredItemId(nextProps.hoveredItemId);
+    componentDidUpdate(prevProps: Readonly<SelectModeProps>) {
+        if (this.tool && this.props.hoveredItemId !== prevProps.hoveredItemId) {
+            this.tool.setPrevHoveredItemId(this.props.hoveredItemId);
         }
-        if (this.tool && nextProps.selectedItems !== this.props.selectedItems) {
-            this.tool.onSelectionChanged(nextProps.selectedItems);
+        if (this.tool && this.props.selectedItems !== prevProps.selectedItems) {
+            this.tool.onSelectionChanged(this.props.selectedItems);
         }
 
-        if (nextProps.isSelectModeActive && !this.props.isSelectModeActive) {
+        if (this.props.isSelectModeActive && !prevProps.isSelectModeActive) {
             this.activateTool();
-        } else if (!nextProps.isSelectModeActive && this.props.isSelectModeActive) {
+        } else if (!this.props.isSelectModeActive && prevProps.isSelectModeActive) {
             this.deactivateTool();
         }
     }
     shouldComponentUpdate (nextProps: SelectModeProps) {
-        return nextProps.isSelectModeActive !== this.props.isSelectModeActive;
+        return (
+            nextProps.isSelectModeActive !== this.props.isSelectModeActive ||
+            nextProps.hoveredItemId !== this.props.hoveredItemId ||
+            nextProps.selectedItems !== this.props.selectedItems
+        );
     }
     componentWillUnmount () {
         if (this.tool) {

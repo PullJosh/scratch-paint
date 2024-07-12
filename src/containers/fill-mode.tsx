@@ -46,30 +46,36 @@ class FillMode extends React.Component<FillModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: FillModeProps) {
+    componentDidUpdate(prevProps: Readonly<FillModeProps>) {
         if (this.tool) {
-            if (nextProps.fillColor !== this.props.fillColor) {
-                this.tool.setFillColor(nextProps.fillColor);
+            if (this.props.fillColor !== prevProps.fillColor) {
+                this.tool.setFillColor(this.props.fillColor);
             }
-            if (nextProps.fillColor2 !== this.props.fillColor2) {
-                this.tool.setFillColor2(nextProps.fillColor2);
+            if (this.props.fillColor2 !== prevProps.fillColor2) {
+                this.tool.setFillColor2(this.props.fillColor2);
             }
-            if (nextProps.hoveredItemId !== this.props.hoveredItemId) {
-                this.tool.setPrevHoveredItemId(nextProps.hoveredItemId);
+            if (this.props.hoveredItemId !== prevProps.hoveredItemId) {
+                this.tool.setPrevHoveredItemId(this.props.hoveredItemId);
             }
-            if (nextProps.fillModeGradientType !== this.props.fillModeGradientType) {
-                this.tool.setGradientType(nextProps.fillModeGradientType);
+            if (this.props.fillModeGradientType !== prevProps.fillModeGradientType) {
+                this.tool.setGradientType(this.props.fillModeGradientType);
             }
         }
 
-        if (nextProps.isFillModeActive && !this.props.isFillModeActive) {
+        if (this.props.isFillModeActive && !prevProps.isFillModeActive) {
             this.activateTool();
-        } else if (!nextProps.isFillModeActive && this.props.isFillModeActive) {
+        } else if (!this.props.isFillModeActive && prevProps.isFillModeActive) {
             this.deactivateTool();
         }
     }
     shouldComponentUpdate (nextProps: FillModeProps) {
-        return nextProps.isFillModeActive !== this.props.isFillModeActive;
+        return (
+            nextProps.isFillModeActive !== this.props.isFillModeActive ||
+            nextProps.fillColor !== this.props.fillColor ||
+            nextProps.fillColor2 !== this.props.fillColor2 ||
+            nextProps.hoveredItemId !== this.props.hoveredItemId ||
+            nextProps.fillModeGradientType !== this.props.fillModeGradientType
+        );
     }
     componentWillUnmount () {
         if (this.tool) {

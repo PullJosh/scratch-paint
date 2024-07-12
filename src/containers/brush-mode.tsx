@@ -47,24 +47,30 @@ class BrushMode extends React.Component<BrushModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: BrushModeProps) {
-        if (nextProps.isBrushModeActive && !this.props.isBrushModeActive) {
+    componentDidUpdate(prevProps: Readonly<BrushModeProps>) {
+        if (this.props.isBrushModeActive && !prevProps.isBrushModeActive) {
             this.activateTool();
-        } else if (!nextProps.isBrushModeActive && this.props.isBrushModeActive) {
+        } else if (!this.props.isBrushModeActive && prevProps.isBrushModeActive) {
             this.deactivateTool();
-        } else if (nextProps.isBrushModeActive && this.props.isBrushModeActive) {
-            const {fillColor, strokeColor, strokeWidth} = nextProps.colorState;
+        } else if (this.props.isBrushModeActive && prevProps.isBrushModeActive) {
+            const {fillColor, strokeColor, strokeWidth} = this.props.colorState;
             this.blob.setOptions({
                 isEraser: false,
                 fillColor: fillColor.primary,
                 strokeColor: strokeColor.primary,
                 strokeWidth,
-                ...nextProps.brushModeState
+                ...this.props.brushModeState
             });
         }
     }
     shouldComponentUpdate (nextProps: BrushModeProps) {
-        return nextProps.isBrushModeActive !== this.props.isBrushModeActive;
+        return (
+            nextProps.isBrushModeActive !== this.props.isBrushModeActive ||
+            nextProps.colorState.fillColor !== this.props.colorState.fillColor ||
+            nextProps.colorState.strokeColor !== this.props.colorState.strokeColor ||
+            nextProps.colorState.strokeWidth !== this.props.colorState.strokeWidth ||
+            nextProps.brushModeState.brushSize !== this.props.brushModeState.brushSize
+        );
     }
     componentWillUnmount () {
         if (this.blob.tool) {

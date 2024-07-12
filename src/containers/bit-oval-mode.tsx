@@ -45,31 +45,37 @@ class BitOvalMode extends React.Component<BitOvalModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: BitOvalModeProps) {
+    componentDidUpdate(prevProps: Readonly<BitOvalModeProps>) {
         if (this.tool) {
-            if (nextProps.color !== this.props.color) {
-                this.tool.setColor(nextProps.color);
+            if (prevProps.color !== this.props.color) {
+                this.tool.setColor(this.props.color);
             }
-            if (nextProps.selectedItems !== this.props.selectedItems) {
-                this.tool.onSelectionChanged(nextProps.selectedItems);
+            if (prevProps.selectedItems !== this.props.selectedItems) {
+                this.tool.onSelectionChanged(this.props.selectedItems);
             }
-            if (nextProps.filled !== this.props.filled) {
-                this.tool.setFilled(nextProps.filled);
+            if (prevProps.filled !== this.props.filled) {
+                this.tool.setFilled(this.props.filled);
             }
-            if (nextProps.thickness !== this.props.thickness ||
-                    nextProps.zoom !== this.props.zoom) {
-                this.tool.setThickness(nextProps.thickness);
+            if (prevProps.thickness !== this.props.thickness || prevProps.zoom !== this.props.zoom) {
+                this.tool.setThickness(this.props.thickness);
             }
         }
 
-        if (nextProps.isOvalModeActive && !this.props.isOvalModeActive) {
+        if (this.props.isOvalModeActive && !prevProps.isOvalModeActive) {
             this.activateTool();
-        } else if (!nextProps.isOvalModeActive && this.props.isOvalModeActive) {
+        } else if (!this.props.isOvalModeActive && prevProps.isOvalModeActive) {
             this.deactivateTool();
         }
     }
     shouldComponentUpdate (nextProps: BitOvalModeProps) {
-        return nextProps.isOvalModeActive !== this.props.isOvalModeActive;
+        return (
+            nextProps.isOvalModeActive !== this.props.isOvalModeActive ||
+            nextProps.color !== this.props.color ||
+            nextProps.selectedItems !== this.props.selectedItems ||
+            nextProps.filled !== this.props.filled ||
+            nextProps.thickness !== this.props.thickness ||
+            nextProps.zoom !== this.props.zoom
+        );
     }
     componentWillUnmount () {
         if (this.tool) {

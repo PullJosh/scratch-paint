@@ -38,19 +38,22 @@ class ReshapeMode extends React.Component<ReshapeModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: ReshapeModeProps) {
-        if (this.tool && nextProps.hoveredItemId !== this.props.hoveredItemId) {
-            this.tool.setPrevHoveredItemId(nextProps.hoveredItemId);
+    componentDidUpdate(prevProps: Readonly<ReshapeModeProps>) {
+        if (this.tool && this.props.hoveredItemId !== prevProps.hoveredItemId) {
+            this.tool.setPrevHoveredItemId(this.props.hoveredItemId);
         }
 
-        if (nextProps.isReshapeModeActive && !this.props.isReshapeModeActive) {
+        if (this.props.isReshapeModeActive && !prevProps.isReshapeModeActive) {
             this.activateTool();
-        } else if (!nextProps.isReshapeModeActive && this.props.isReshapeModeActive) {
+        } else if (!this.props.isReshapeModeActive && prevProps.isReshapeModeActive) {
             this.deactivateTool();
         }
     }
     shouldComponentUpdate (nextProps: ReshapeModeProps) {
-        return nextProps.isReshapeModeActive !== this.props.isReshapeModeActive;
+        return (
+            nextProps.isReshapeModeActive !== this.props.isReshapeModeActive ||
+            nextProps.hoveredItemId !== this.props.hoveredItemId
+        );
     }
     componentWillUnmount () {
         if (this.tool) {

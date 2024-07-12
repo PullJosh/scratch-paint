@@ -46,12 +46,12 @@ class ScrollableCanvas extends React.Component<ScrollableCanvasProps> {
             this.props.canvas.addEventListener('wheel', this.handleWheel);
         }
     }
-    componentWillReceiveProps (nextProps: ScrollableCanvasProps) {
-        if (nextProps.canvas) {
-            if (this.props.canvas) {
-                this.props.canvas.removeEventListener('wheel', this.handleWheel);
+    componentDidUpdate(prevProps: Readonly<ScrollableCanvasProps>) {
+        if (this.props.canvas) {
+            if (prevProps.canvas) {
+                prevProps.canvas.removeEventListener('wheel', this.handleWheel);
             }
-            nextProps.canvas.addEventListener('wheel', this.handleWheel);
+            this.props.canvas.addEventListener('wheel', this.handleWheel);
         }
     }
     handleHorizontalScrollbarMouseDown (event: React.MouseEvent | React.TouchEvent) {

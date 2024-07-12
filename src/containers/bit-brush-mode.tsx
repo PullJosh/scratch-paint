@@ -38,22 +38,26 @@ class BitBrushMode extends React.Component<BitBrushModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: BitBrushModeProps) {
-        if (this.tool && nextProps.color !== this.props.color) {
-            this.tool.setColor(nextProps.color);
+    componentDidUpdate(prevProps: Readonly<BitBrushModeProps>) {
+        if (this.tool && prevProps.color !== this.props.color) {
+            this.tool.setColor(this.props.color);
         }
-        if (this.tool && nextProps.bitBrushSize !== this.props.bitBrushSize) {
-            this.tool.setBrushSize(nextProps.bitBrushSize);
+        if (this.tool && prevProps.bitBrushSize !== this.props.bitBrushSize) {
+            this.tool.setBrushSize(this.props.bitBrushSize);
         }
 
-        if (nextProps.isBitBrushModeActive && !this.props.isBitBrushModeActive) {
+        if (this.props.isBitBrushModeActive && !prevProps.isBitBrushModeActive) {
             this.activateTool();
-        } else if (!nextProps.isBitBrushModeActive && this.props.isBitBrushModeActive) {
+        } else if (!this.props.isBitBrushModeActive && prevProps.isBitBrushModeActive) {
             this.deactivateTool();
         }
     }
     shouldComponentUpdate (nextProps: BitBrushModeProps) {
-        return nextProps.isBitBrushModeActive !== this.props.isBitBrushModeActive;
+        return (
+            nextProps.isBitBrushModeActive !== this.props.isBitBrushModeActive ||
+            nextProps.color !== this.props.color ||
+            nextProps.bitBrushSize !== this.props.bitBrushSize
+        );
     }
     componentWillUnmount () {
         if (this.tool) {
@@ -70,7 +74,8 @@ class BitBrushMode extends React.Component<BitBrushModeProps> {
             color = DEFAULT_COLOR;
         }
         this.tool = new BitBrushTool(
-            this.props.onUpdateImage
+            this.props.onUpdateImage,
+            false /* isEraser */
         );
         this.tool.setColor(color);
         this.tool.setBrushSize(this.props.bitBrushSize);

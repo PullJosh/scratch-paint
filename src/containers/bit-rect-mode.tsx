@@ -45,31 +45,38 @@ class BitRectMode extends React.Component<BitRectModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: BitRectModeProps) {
+    componentDidUpdate(prevProps: Readonly<BitRectModeProps>) {
         if (this.tool) {
-            if (nextProps.color !== this.props.color) {
-                this.tool.setColor(nextProps.color);
+            if (prevProps.color !== this.props.color) {
+                this.tool.setColor(this.props.color);
             }
-            if (nextProps.selectedItems !== this.props.selectedItems) {
-                this.tool.onSelectionChanged(nextProps.selectedItems);
+            if (prevProps.selectedItems !== this.props.selectedItems) {
+                this.tool.onSelectionChanged(this.props.selectedItems);
             }
-            if (nextProps.filled !== this.props.filled) {
-                this.tool.setFilled(nextProps.filled);
+            if (prevProps.filled !== this.props.filled) {
+                this.tool.setFilled(this.props.filled);
             }
-            if (nextProps.thickness !== this.props.thickness ||
-                    nextProps.zoom !== this.props.zoom) {
-                this.tool.setThickness(nextProps.thickness);
+            if (prevProps.thickness !== this.props.thickness ||
+                    prevProps.zoom !== this.props.zoom) {
+                this.tool.setThickness(this.props.thickness);
             }
         }
 
-        if (nextProps.isRectModeActive && !this.props.isRectModeActive) {
+        if (this.props.isRectModeActive && !prevProps.isRectModeActive) {
             this.activateTool();
-        } else if (!nextProps.isRectModeActive && this.props.isRectModeActive) {
+        } else if (!this.props.isRectModeActive && prevProps.isRectModeActive) {
             this.deactivateTool();
         }
     }
     shouldComponentUpdate (nextProps: BitRectModeProps) {
-        return nextProps.isRectModeActive !== this.props.isRectModeActive;
+        return (
+            nextProps.isRectModeActive !== this.props.isRectModeActive ||
+            nextProps.color !== this.props.color ||
+            nextProps.selectedItems !== this.props.selectedItems ||
+            nextProps.filled !== this.props.filled ||
+            nextProps.thickness !== this.props.thickness ||
+            nextProps.zoom !== this.props.zoom
+        );
     }
     componentWillUnmount () {
         if (this.tool) {

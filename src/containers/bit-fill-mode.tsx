@@ -42,27 +42,32 @@ class BitFillMode extends React.Component<BitFillModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: BitFillModeProps) {
+    componentDidUpdate(prevProps: Readonly<BitFillModeProps>) {
         if (this.tool) {
-            if (nextProps.color !== this.props.color) {
-                this.tool.setColor(nextProps.color);
+            if (prevProps.color !== this.props.color) {
+                this.tool.setColor(this.props.color);
             }
-            if (nextProps.color2 !== this.props.color2) {
-                this.tool.setColor2(nextProps.color2);
+            if (prevProps.color2 !== this.props.color2) {
+                this.tool.setColor2(this.props.color2);
             }
-            if (nextProps.fillModeGradientType !== this.props.fillModeGradientType) {
-                this.tool.setGradientType(nextProps.fillModeGradientType);
+            if (prevProps.fillModeGradientType !== this.props.fillModeGradientType) {
+                this.tool.setGradientType(this.props.fillModeGradientType);
             }
         }
 
-        if (nextProps.isFillModeActive && !this.props.isFillModeActive) {
+        if (this.props.isFillModeActive && !prevProps.isFillModeActive) {
             this.activateTool();
-        } else if (!nextProps.isFillModeActive && this.props.isFillModeActive) {
+        } else if (!this.props.isFillModeActive && prevProps.isFillModeActive) {
             this.deactivateTool();
         }
     }
     shouldComponentUpdate (nextProps: BitFillModeProps) {
-        return nextProps.isFillModeActive !== this.props.isFillModeActive;
+        return (
+            nextProps.isFillModeActive !== this.props.isFillModeActive ||
+            nextProps.color !== this.props.color ||
+            nextProps.color2 !== this.props.color2 ||
+            nextProps.fillModeGradientType !== this.props.fillModeGradientType
+        );
     }
     componentWillUnmount () {
         if (this.tool) {

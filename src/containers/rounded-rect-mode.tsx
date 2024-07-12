@@ -37,19 +37,22 @@ class RoundedRectMode extends React.Component<RoundedRectModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: RoundedRectModeProps) {
-        if (this.tool && nextProps.hoveredItemId !== this.props.hoveredItemId) {
-            this.tool.setPrevHoveredItemId(nextProps.hoveredItemId);
+    componentDidUpdate(prevProps: Readonly<RoundedRectModeProps>) {
+        if (this.tool && this.props.hoveredItemId !== prevProps.hoveredItemId) {
+            this.tool.setPrevHoveredItemId(this.props.hoveredItemId);
         }
 
-        if (nextProps.isRoundedRectModeActive && !this.props.isRoundedRectModeActive) {
+        if (this.props.isRoundedRectModeActive && !prevProps.isRoundedRectModeActive) {
             this.activateTool();
-        } else if (!nextProps.isRoundedRectModeActive && this.props.isRoundedRectModeActive) {
+        } else if (!this.props.isRoundedRectModeActive && prevProps.isRoundedRectModeActive) {
             this.deactivateTool();
         }
     }
     shouldComponentUpdate (nextProps: RoundedRectModeProps) {
-        return nextProps.isRoundedRectModeActive !== this.props.isRoundedRectModeActive;
+        return (
+            nextProps.isRoundedRectModeActive !== this.props.isRoundedRectModeActive ||
+            nextProps.hoveredItemId !== this.props.hoveredItemId
+        );
     }
     componentWillUnmount () {
         if (this.tool) {

@@ -52,22 +52,26 @@ class RectMode extends React.Component<RectModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: RectModeProps) {
-        if (this.tool && nextProps.colorState !== this.props.colorState) {
-            this.tool.setColorState(nextProps.colorState);
+    componentDidUpdate(prevProps: Readonly<RectModeProps>) {
+        if (this.tool && this.props.colorState !== prevProps.colorState) {
+            this.tool.setColorState(this.props.colorState);
         }
-        if (this.tool && nextProps.selectedItems !== this.props.selectedItems) {
-            this.tool.onSelectionChanged(nextProps.selectedItems);
+        if (this.tool && this.props.selectedItems !== prevProps.selectedItems) {
+            this.tool.onSelectionChanged(this.props.selectedItems);
         }
 
-        if (nextProps.isRectModeActive && !this.props.isRectModeActive) {
+        if (this.props.isRectModeActive && !prevProps.isRectModeActive) {
             this.activateTool();
-        } else if (!nextProps.isRectModeActive && this.props.isRectModeActive) {
+        } else if (!this.props.isRectModeActive && prevProps.isRectModeActive) {
             this.deactivateTool();
         }
     }
     shouldComponentUpdate (nextProps: RectModeProps) {
-        return nextProps.isRectModeActive !== this.props.isRectModeActive;
+        return (
+            nextProps.isRectModeActive !== this.props.isRectModeActive ||
+            nextProps.colorState !== this.props.colorState ||
+            nextProps.selectedItems !== this.props.selectedItems
+        );
     }
     componentWillUnmount () {
         if (this.tool) {

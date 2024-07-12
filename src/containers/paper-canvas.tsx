@@ -95,15 +95,15 @@ class PaperCanvas extends React.Component<PaperCanvasProps> {
         this.importImage(
             this.props.imageFormat, this.props.image, this.props.rotationCenterX, this.props.rotationCenterY);
     }
-    componentWillReceiveProps (newProps: PaperCanvasProps) {
-        if (this.props.imageId !== newProps.imageId) {
-            this.switchCostume(newProps.imageFormat, newProps.image,
-                newProps.rotationCenterX, newProps.rotationCenterY,
-                this.props.zoomLevelId, newProps.zoomLevelId);
+    componentDidUpdate(prevProps: Readonly<PaperCanvasProps>) {
+        if (prevProps.imageId !== this.props.imageId) {
+            this.switchCostume(this.props.imageFormat, this.props.image,
+                this.props.rotationCenterX, this.props.rotationCenterY,
+                prevProps.zoomLevelId, this.props.zoomLevelId);
         }
-        if (this.props.format !== newProps.format) {
+        if (prevProps.format !== this.props.format) {
             this.recalibrateSize();
-            convertBackgroundGuideLayer(newProps.format);
+            convertBackgroundGuideLayer(this.props.format);
         }
     }
     componentWillUnmount () {

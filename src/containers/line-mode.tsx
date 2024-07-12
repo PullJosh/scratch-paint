@@ -58,10 +58,10 @@ class LineMode extends React.Component<LineModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: LineModeProps) {
-        if (nextProps.isLineModeActive && !this.props.isLineModeActive) {
+    componentDidUpdate(prevProps: Readonly<LineModeProps>) {
+        if (this.props.isLineModeActive && !prevProps.isLineModeActive) {
             this.activateTool();
-        } else if (!nextProps.isLineModeActive && this.props.isLineModeActive) {
+        } else if (!this.props.isLineModeActive && prevProps.isLineModeActive) {
             this.deactivateTool();
         }
     }

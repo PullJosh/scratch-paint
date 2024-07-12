@@ -52,22 +52,26 @@ class OvalMode extends React.Component<OvalModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: OvalModeProps) {
-        if (this.tool && nextProps.colorState !== this.props.colorState) {
-            this.tool.setColorState(nextProps.colorState);
+    componentDidUpdate(prevProps: Readonly<OvalModeProps>) {
+        if (this.tool && this.props.colorState !== prevProps.colorState) {
+            this.tool.setColorState(this.props.colorState);
         }
-        if (this.tool && nextProps.selectedItems !== this.props.selectedItems) {
-            this.tool.onSelectionChanged(nextProps.selectedItems);
+        if (this.tool && this.props.selectedItems !== prevProps.selectedItems) {
+            this.tool.onSelectionChanged(this.props.selectedItems);
         }
 
-        if (nextProps.isOvalModeActive && !this.props.isOvalModeActive) {
+        if (this.props.isOvalModeActive && !prevProps.isOvalModeActive) {
             this.activateTool();
-        } else if (!nextProps.isOvalModeActive && this.props.isOvalModeActive) {
+        } else if (!this.props.isOvalModeActive && prevProps.isOvalModeActive) {
             this.deactivateTool();
         }
     }
     shouldComponentUpdate (nextProps: OvalModeProps) {
-        return nextProps.isOvalModeActive !== this.props.isOvalModeActive;
+        return (
+            nextProps.isOvalModeActive !== this.props.isOvalModeActive ||
+            nextProps.colorState !== this.props.colorState ||
+            nextProps.selectedItems !== this.props.selectedItems
+        );
     }
     componentWillUnmount () {
         if (this.tool) {

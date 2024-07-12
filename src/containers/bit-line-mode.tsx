@@ -38,22 +38,26 @@ class BitLineMode extends React.Component<BitLineModeProps> {
             this.activateTool();
         }
     }
-    componentWillReceiveProps (nextProps: BitLineModeProps) {
-        if (this.tool && nextProps.color !== this.props.color) {
-            this.tool.setColor(nextProps.color);
+    componentDidUpdate(prevProps: Readonly<BitLineModeProps>) {
+        if (this.tool && prevProps.color !== this.props.color) {
+            this.tool.setColor(this.props.color);
         }
-        if (this.tool && nextProps.bitBrushSize !== this.props.bitBrushSize) {
-            this.tool.setLineSize(nextProps.bitBrushSize);
+        if (this.tool && prevProps.bitBrushSize !== this.props.bitBrushSize) {
+            this.tool.setLineSize(this.props.bitBrushSize);
         }
 
-        if (nextProps.isBitLineModeActive && !this.props.isBitLineModeActive) {
+        if (this.props.isBitLineModeActive && !prevProps.isBitLineModeActive) {
             this.activateTool();
-        } else if (!nextProps.isBitLineModeActive && this.props.isBitLineModeActive) {
+        } else if (!this.props.isBitLineModeActive && prevProps.isBitLineModeActive) {
             this.deactivateTool();
         }
     }
     shouldComponentUpdate (nextProps: BitLineModeProps) {
-        return nextProps.isBitLineModeActive !== this.props.isBitLineModeActive;
+        return (
+            nextProps.isBitLineModeActive !== this.props.isBitLineModeActive ||
+            nextProps.color !== this.props.color ||
+            nextProps.bitBrushSize !== this.props.bitBrushSize
+        );
     }
     componentWillUnmount () {
         if (this.tool) {
