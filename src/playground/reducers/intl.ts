@@ -11,7 +11,7 @@ const intlInitialState = {
     }
 };
 
-const updateIntl = locale => superUpdateIntl({
+const updateIntl = (locale: string) => superUpdateIntl({
     locale: locale,
     messages: paintMessages[locale].messages || paintMessages.en.messages
 });

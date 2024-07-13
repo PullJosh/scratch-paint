@@ -11,7 +11,6 @@ const intl = {
     formatRelativeTime: ({defaultMessage}) => defaultMessage,
     formatNumber: ({defaultMessage}) => defaultMessage,
     formatPlural: ({defaultMessage}) => defaultMessage,
-    formatHTMLMessage: ({defaultMessage}) => defaultMessage,
     now: () => 0
 };
 
