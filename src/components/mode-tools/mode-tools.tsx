@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import {changeBrushSize} from '../../reducers/brush-mode';
@@ -10,12 +9,12 @@ import {changeBitEraserSize} from '../../reducers/bit-eraser-size';
 import {setShapesFilled} from '../../reducers/fill-bitmap-shapes';
 
 import FontDropdown from '../../containers/font-dropdown';
-import LiveInputHOC from '../forms/live-input-hoc.jsx';
-import Label from '../forms/label.jsx';
-import {defineMessages, injectIntl, intlShape} from 'react-intl';
-import Input from '../forms/input.jsx';
-import InputGroup from '../input-group/input-group.jsx';
-import LabeledIconButton from '../labeled-icon-button/labeled-icon-button.jsx';
+import LiveInputHOC from '../forms/live-input-hoc';
+import Label from '../forms/label';
+import {defineMessages, injectIntl, InjectedIntl} from 'react-intl';
+import Input from '../forms/input';
+import InputGroup from '../input-group/input-group';
+import LabeledIconButton from '../labeled-icon-button/labeled-icon-button';
 import Modes from '../../lib/modes';
 import Formats, {isBitmap, isVector} from '../../lib/format';
 import {hideLabel} from '../../lib/hide-label';
@@ -41,8 +40,37 @@ import bitRectOutlinedIcon from '../bit-rect-mode/rectangle-outlined.svg';
 
 import {MAX_STROKE_WIDTH} from '../../reducers/stroke-width';
 
+interface ModeToolsComponentProps {
+    bitBrushSize?: number;
+    bitEraserSize?: number;
+    brushValue?: number;
+    className?: string;
+    clipboardItems?: any[][];
+    eraserValue?: number;
+    fillBitmapShapes?: boolean;
+    format?: keyof typeof Formats;
+    hasSelectedUncurvedPoints?: boolean;
+    hasSelectedUnpointedPoints?: boolean;
+    intl: InjectedIntl;
+    mode: string;
+    onBitBrushSliderChange: (bitBrushSize: number) => void;
+    onBitEraserSliderChange: (eraserSize: number) => void;
+    onBrushSliderChange: (brushSize: number) => void;
+    onCopyToClipboard: () => void;
+    onCurvePoints: () => void;
+    onDelete: () => void;
+    onEraserSliderChange?: (eraserSize: number) => void;
+    onFillShapes: () => void;
+    onFlipHorizontal: () => void;
+    onFlipVertical: () => void;
+    onOutlineShapes: () => void;
+    onPasteFromClipboard: () => void;
+    onPointPoints: () => void;
+    onUpdateImage: () => void;
+}
+
 const LiveInput = LiveInputHOC(Input);
-const ModeToolsComponent = props => {
+const ModeToolsComponent = (props: ModeToolsComponentProps) => {
     const messages = defineMessages({
         brushSize: {
             defaultMessage: 'Size',
@@ -132,7 +160,7 @@ const ModeToolsComponent = props => {
                     range
                     small
                     max={MAX_STROKE_WIDTH}
-                    min="1"
+                    min={1}
                     type="number"
                     value={currentBrushValue}
                     onSubmit={changeFunction}
@@ -161,7 +189,7 @@ const ModeToolsComponent = props => {
                     range
                     small
                     max={MAX_STROKE_WIDTH}
-                    min="1"
+                    min={1}
                     type="number"
                     value={currentEraserValue}
                     onSubmit={changeFunction}
@@ -285,7 +313,7 @@ const ModeToolsComponent = props => {
                                 range
                                 small
                                 max={MAX_STROKE_WIDTH}
-                                min="1"
+                                min={1}
                                 type="number"
                                 value={props.bitBrushSize}
                                 onSubmit={props.onBitBrushSliderChange}
@@ -302,35 +330,6 @@ const ModeToolsComponent = props => {
             <div className={classNames(props.className, styles.modeTools)} />
         );
     }
-};
-
-ModeToolsComponent.propTypes = {
-    bitBrushSize: PropTypes.number,
-    bitEraserSize: PropTypes.number,
-    brushValue: PropTypes.number,
-    className: PropTypes.string,
-    clipboardItems: PropTypes.arrayOf(PropTypes.array),
-    eraserValue: PropTypes.number,
-    fillBitmapShapes: PropTypes.bool,
-    format: PropTypes.oneOf(Object.keys(Formats)),
-    hasSelectedUncurvedPoints: PropTypes.bool,
-    hasSelectedUnpointedPoints: PropTypes.bool,
-    intl: intlShape.isRequired,
-    mode: PropTypes.string.isRequired,
-    onBitBrushSliderChange: PropTypes.func.isRequired,
-    onBitEraserSliderChange: PropTypes.func.isRequired,
-    onBrushSliderChange: PropTypes.func.isRequired,
-    onCopyToClipboard: PropTypes.func.isRequired,
-    onCurvePoints: PropTypes.func.isRequired,
-    onDelete: PropTypes.func.isRequired,
-    onEraserSliderChange: PropTypes.func,
-    onFillShapes: PropTypes.func.isRequired,
-    onFlipHorizontal: PropTypes.func.isRequired,
-    onFlipVertical: PropTypes.func.isRequired,
-    onOutlineShapes: PropTypes.func.isRequired,
-    onPasteFromClipboard: PropTypes.func.isRequired,
-    onPointPoints: PropTypes.func.isRequired,
-    onUpdateImage: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

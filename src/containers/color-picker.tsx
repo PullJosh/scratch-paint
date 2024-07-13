@@ -9,7 +9,7 @@ import {clearSelectedItems} from '../reducers/selected-items';
 import {activateEyeDropper} from '../reducers/eye-dropper';
 import GradientTypes from '../lib/gradient-types';
 
-import ColorPickerComponent from '../components/color-picker/color-picker.jsx';
+import ColorPickerComponent from '../components/color-picker/color-picker';
 import {MIXED} from '../helper/style-path';
 import Modes from '../lib/modes';
 

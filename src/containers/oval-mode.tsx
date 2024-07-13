@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 import Modes from '../lib/modes';
 import {MIXED} from '../helper/style-path';
-import ColorStyleProptype from '../lib/color-style-proptype';
+import ColorStyleType from '../lib/color-style-type';
 import GradientTypes from '../lib/gradient-types';
 
 import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style';
@@ -15,15 +15,15 @@ import {setCursor} from '../reducers/cursor';
 
 import {clearSelection, getSelectedLeafItems} from '../helper/selection';
 import OvalTool from '../helper/tools/oval-tool';
-import OvalModeComponent from '../components/oval-mode/oval-mode.jsx';
+import OvalModeComponent from '../components/oval-mode/oval-mode';
 
 interface OvalModeProps {
     clearFillGradient: () => void;
     clearStrokeGradient: () => void;
     clearSelectedItems: () => void;
     colorState: {
-        fillColor: any; // TODO: ColorStyleProptype
-        strokeColor: any; // TODO: ColorStyleProptype
+        fillColor: ColorStyleType;
+        strokeColor: ColorStyleType;
         strokeWidth: number; // TODO: This was originally optional in propTypes
     };
     handleMouseDown: () => void;

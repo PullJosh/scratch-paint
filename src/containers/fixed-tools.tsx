@@ -1,20 +1,20 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import FixedToolsComponent from '../components/fixed-tools/fixed-tools.jsx';
+import FixedToolsComponent from '../components/fixed-tools/fixed-tools';
 
-import {changeMode} from '../reducers/modes.js';
-import {changeFormat} from '../reducers/format.js';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
-import {deactivateEyeDropper} from '../reducers/eye-dropper.js';
-import {setTextEditTarget} from '../reducers/text-edit-target.js';
-import {setLayout} from '../reducers/layout.js';
+import {changeMode} from '../reducers/modes';
+import {changeFormat} from '../reducers/format';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
+import {deactivateEyeDropper} from '../reducers/eye-dropper';
+import {setTextEditTarget} from '../reducers/text-edit-target';
+import {setLayout} from '../reducers/layout';
 
-import {getSelectedLeafItems} from '../helper/selection.js';
-import {bringToFront, sendBackward, sendToBack, bringForward} from '../helper/order.js';
-import {groupSelection, ungroupSelection} from '../helper/group.js';
+import {getSelectedLeafItems} from '../helper/selection';
+import {bringToFront, sendBackward, sendToBack, bringForward} from '../helper/order';
+import {groupSelection, ungroupSelection} from '../helper/group';
 
-import Formats, {isBitmap} from '../lib/format.js';
+import Formats, {isBitmap} from '../lib/format';
 import bindAll from 'lodash.bindall';
 
 interface FixedToolsProps {

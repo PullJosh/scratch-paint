@@ -113,7 +113,6 @@ module.exports = [
     defaultsDeep({}, base, {
         externals: {
             'minilog': 'minilog',
-            'prop-types': 'prop-types',
             'react': 'react',
             'react-dom': 'react-dom',
             'react-intl': 'react-intl',
@@ -121,7 +120,6 @@ module.exports = [
             'react-popover': 'react-popover',
             'react-redux': 'react-redux',
             'react-responsive': 'react-responsive',
-            'react-style-proptype': 'react-style-proptype',
             'react-tooltip': 'react-tooltip',
             'redux': 'redux'
         },

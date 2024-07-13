@@ -2,13 +2,13 @@ import paper from '@scratch/paper';
 
 import React from 'react';
 import {connect} from 'react-redux';
-import ScrollableCanvasComponent from '../components/scrollable-canvas/scrollable-canvas.jsx';
+import ScrollableCanvasComponent from '../components/scrollable-canvas/scrollable-canvas';
 
-import {clampViewBounds, pan, zoomOnFixedPoint, getWorkspaceBounds} from '../helper/view.js';
-import {updateViewBounds} from '../reducers/view-bounds.js';
-import {redrawSelectionBox} from '../reducers/selected-items.js';
+import {clampViewBounds, pan, zoomOnFixedPoint, getWorkspaceBounds} from '../helper/view';
+import {updateViewBounds} from '../reducers/view-bounds';
+import {redrawSelectionBox} from '../reducers/selected-items';
 
-import {getEventXY} from '../lib/touch-utils.js';
+import {getEventXY} from '../lib/touch-utils';
 import bindAll from 'lodash.bindall';
 
 interface ScrollableCanvasProps {

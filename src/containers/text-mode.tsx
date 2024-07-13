@@ -2,31 +2,31 @@ import paper from '@scratch/paper';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Fonts from '../lib/fonts.js';
-import Modes from '../lib/modes.js';
-import ColorStyleProptype from '../lib/color-style-proptype.js';
-import {MIXED} from '../helper/style-path.js';
+import Fonts from '../lib/fonts';
+import Modes from '../lib/modes';
+import ColorStyleType from '../lib/color-style-type';
+import {MIXED} from '../helper/style-path';
 
-import {changeFont} from '../reducers/font.js';
-import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style.js';
-import {changeStrokeColor} from '../reducers/stroke-style.js';
-import {changeMode} from '../reducers/modes.js';
-import {setTextEditTarget} from '../reducers/text-edit-target.js';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
-import {setCursor} from '../reducers/cursor.js';
+import {changeFont} from '../reducers/font';
+import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style';
+import {changeStrokeColor} from '../reducers/stroke-style';
+import {changeMode} from '../reducers/modes';
+import {setTextEditTarget} from '../reducers/text-edit-target';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
+import {setCursor} from '../reducers/cursor';
 
-import {clearSelection, getSelectedLeafItems} from '../helper/selection.js';
-import TextTool from '../helper/tools/text-tool.js';
-import TextModeComponent from '../components/text-mode/text-mode.jsx';
-import BitTextModeComponent from '../components/bit-text-mode/bit-text-mode.jsx';
+import {clearSelection, getSelectedLeafItems} from '../helper/selection';
+import TextTool from '../helper/tools/text-tool';
+import TextModeComponent from '../components/text-mode/text-mode';
+import BitTextModeComponent from '../components/bit-text-mode/bit-text-mode';
 
 interface TextModeProps {
     changeFont: (font: string) => void;
     clearGradient: () => void;
     clearSelectedItems: () => void;
     colorState: {
-        fillColor: any; // TODO: ColorStyleProptype
-        strokeColor: any; // TODO: ColorStyleProptype
+        fillColor: ColorStyleType;
+        strokeColor: ColorStyleType;
         strokeWidth: number;
     };
     font?: string;

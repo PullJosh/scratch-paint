@@ -1,6 +1,6 @@
 import paper from '@scratch/paper';
 import classNames from 'classnames';
-import {defineMessages, injectIntl, intlShape} from 'react-intl';
+import {defineMessages, injectIntl, InjectedIntl} from 'react-intl';
 import React from 'react';
 
 import PaperCanvas from '../../containers/paper-canvas';
@@ -13,16 +13,16 @@ import BitRectMode from '../../containers/bit-rect-mode';
 import BitFillMode from '../../containers/bit-fill-mode';
 import BitEraserMode from '../../containers/bit-eraser-mode';
 import BitSelectMode from '../../containers/bit-select-mode';
-import Box from '../box/box.jsx';
-import Button from '../button/button.jsx';
-import ButtonGroup from '../button-group/button-group.jsx';
+import Box from '../box/box';
+import Button from '../button/button';
+import ButtonGroup from '../button-group/button-group';
 import BrushMode from '../../containers/brush-mode';
 import EraserMode from '../../containers/eraser-mode';
 import FillColorIndicatorComponent from '../../containers/fill-color-indicator';
 import FillMode from '../../containers/fill-mode';
-import InputGroup from '../input-group/input-group.jsx';
+import InputGroup from '../input-group/input-group';
 import LineMode from '../../containers/line-mode';
-import Loupe from '../loupe/loupe.jsx';
+import Loupe from '../loupe/loupe';
 import FixedToolsContainer from '../../containers/fixed-tools';
 import ModeToolsContainer from '../../containers/mode-tools';
 import OvalMode from '../../containers/oval-mode';
@@ -33,7 +33,7 @@ import StrokeColorIndicatorComponent from '../../containers/stroke-color-indicat
 import StrokeWidthIndicatorComponent from '../../containers/stroke-width-indicator';
 import TextMode from '../../containers/text-mode';
 
-import Formats, {isBitmap, isVector} from '../../lib/format.js';
+import Formats, {isBitmap, isVector} from '../../lib/format';
 import styles from './paint-editor.css';
 
 import bitmapIcon from './icons/bitmap.svg';
@@ -63,7 +63,7 @@ interface PaintEditorComponentProps {
     image?: string | HTMLImageElement;
     imageFormat?: string;
     imageId?: string;
-    intl: any; // TODO: This used to be `intlShape`
+    intl: InjectedIntl;
     isEyeDropping?: boolean;
     name?: string;
     onRedo: () => void;

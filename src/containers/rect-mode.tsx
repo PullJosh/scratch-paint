@@ -2,28 +2,28 @@ import paper from '@scratch/paper';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes.js';
-import {MIXED} from '../helper/style-path.js';
-import ColorStyleProptype from '../lib/color-style-proptype.js';
-import GradientTypes from '../lib/gradient-types.js';
+import Modes from '../lib/modes';
+import {MIXED} from '../helper/style-path';
+import ColorStyleType from '../lib/color-style-type';
+import GradientTypes from '../lib/gradient-types';
 
-import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style.js';
-import {changeStrokeColor, clearStrokeGradient} from '../reducers/stroke-style.js';
-import {changeMode} from '../reducers/modes.js';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
-import {setCursor} from '../reducers/cursor.js';
+import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style';
+import {changeStrokeColor, clearStrokeGradient} from '../reducers/stroke-style';
+import {changeMode} from '../reducers/modes';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
+import {setCursor} from '../reducers/cursor';
 
-import {clearSelection, getSelectedLeafItems} from '../helper/selection.js';
-import RectTool from '../helper/tools/rect-tool.js';
-import RectModeComponent from '../components/rect-mode/rect-mode.jsx';
+import {clearSelection, getSelectedLeafItems} from '../helper/selection';
+import RectTool from '../helper/tools/rect-tool';
+import RectModeComponent from '../components/rect-mode/rect-mode';
 
 interface RectModeProps {
     clearFillGradient: () => void;
     clearStrokeGradient: () => void;
     clearSelectedItems: () => void;
     colorState: {
-        fillColor: any; // TODO: ColorStyleProptype
-        strokeColor: any; // TODO: ColorStyleProptype
+        fillColor: ColorStyleType;
+        strokeColor: ColorStyleType;
         strokeWidth: number;
     };
     handleMouseDown: () => void;

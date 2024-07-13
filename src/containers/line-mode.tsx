@@ -2,26 +2,26 @@ import paper from '@scratch/paper';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes.js';
-import ColorStyleProptype from '../lib/color-style-proptype.js';
-import {clearSelection} from '../helper/selection.js';
-import {endPointHit, touching} from '../helper/snapping.js';
-import {drawHitPoint, removeHitPoint} from '../helper/guides.js';
-import {styleShape, MIXED} from '../helper/style-path.js';
-import {changeStrokeColor, clearStrokeGradient} from '../reducers/stroke-style.js';
-import {changeStrokeWidth} from '../reducers/stroke-width.js';
-import {changeMode} from '../reducers/modes.js';
-import {clearSelectedItems} from '../reducers/selected-items.js';
-import {snapDeltaToAngle} from '../helper/math.js';
+import Modes from '../lib/modes';
+import ColorStyleType from '../lib/color-style-type';
+import {clearSelection} from '../helper/selection';
+import {endPointHit, touching} from '../helper/snapping';
+import {drawHitPoint, removeHitPoint} from '../helper/guides';
+import {styleShape, MIXED} from '../helper/style-path';
+import {changeStrokeColor, clearStrokeGradient} from '../reducers/stroke-style';
+import {changeStrokeWidth} from '../reducers/stroke-width';
+import {changeMode} from '../reducers/modes';
+import {clearSelectedItems} from '../reducers/selected-items';
+import {snapDeltaToAngle} from '../helper/math';
 
-import LineModeComponent from '../components/line-mode/line-mode.jsx';
+import LineModeComponent from '../components/line-mode/line-mode';
 
 interface LineModeProps {
     clearSelectedItems: () => void;
     clearStrokeGradient: () => void;
     colorState: {
-        fillColor: any; // TODO: ColorStyleProptype
-        strokeColor: any; // TODO: ColorStyleProptype
+        fillColor: ColorStyleType;
+        strokeColor: ColorStyleType;
         strokeWidth: number; // TODO: Original propType was `PropTypes.number` which is optional
     };
     handleMouseDown: () => void;

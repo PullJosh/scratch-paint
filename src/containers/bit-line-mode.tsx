@@ -1,16 +1,16 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes.js';
-import {MIXED} from '../helper/style-path.js';
+import Modes from '../lib/modes';
+import {MIXED} from '../helper/style-path';
 
-import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style.js';
-import {changeMode} from '../reducers/modes.js';
-import {clearSelectedItems} from '../reducers/selected-items.js';
-import {clearSelection} from '../helper/selection.js';
+import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style';
+import {changeMode} from '../reducers/modes';
+import {clearSelectedItems} from '../reducers/selected-items';
+import {clearSelection} from '../helper/selection';
 
-import BitLineModeComponent from '../components/bit-line-mode/bit-line-mode.jsx';
-import BitLineTool from '../helper/bit-tools/line-tool.js';
+import BitLineModeComponent from '../components/bit-line-mode/bit-line-mode';
+import BitLineTool from '../helper/bit-tools/line-tool';
 
 interface BitLineModeProps {
     bitBrushSize: number;

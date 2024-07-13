@@ -2,16 +2,16 @@ import {connect} from 'react-redux';
 import React from 'react';
 import bindAll from 'lodash.bindall';
 import parseColor from 'parse-color';
-import {changeStrokeColor, changeStrokeColor2, changeStrokeGradientType} from '../reducers/stroke-style.js';
-import {changeStrokeWidth} from '../reducers/stroke-width.js';
-import StrokeWidthIndicatorComponent from '../components/stroke-width-indicator.jsx';
-import {getSelectedLeafItems} from '../helper/selection.js';
+import {changeStrokeColor, changeStrokeColor2, changeStrokeGradientType} from '../reducers/stroke-style';
+import {changeStrokeWidth} from '../reducers/stroke-width';
+import StrokeWidthIndicatorComponent from '../components/stroke-width-indicator';
+import {getSelectedLeafItems} from '../helper/selection';
 import {
     applyColorToSelection, applyStrokeWidthToSelection, getColorsFromSelection, MIXED
-} from '../helper/style-path.js';
-import GradientTypes from '../lib/gradient-types.js';
-import Modes from '../lib/modes.js';
-import Formats, {isBitmap} from '../lib/format.js';
+} from '../helper/style-path';
+import GradientTypes from '../lib/gradient-types';
+import Modes from '../lib/modes';
+import Formats, {isBitmap} from '../lib/format';
 
 interface StrokeWidthIndicatorProps {
     disabled: boolean;

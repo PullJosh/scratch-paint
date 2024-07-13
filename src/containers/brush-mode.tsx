@@ -1,17 +1,17 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes.js';
-import ColorStyleProptype from '../lib/color-style-proptype.js';
-import Blobbiness from '../helper/blob-tools/blob.js';
-import {MIXED} from '../helper/style-path.js';
+import Modes from '../lib/modes';
+import ColorStyleType from '../lib/color-style-type';
+import Blobbiness from '../helper/blob-tools/blob';
+import {MIXED} from '../helper/style-path';
 
-import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style.js';
-import {changeMode} from '../reducers/modes.js';
-import {clearSelectedItems} from '../reducers/selected-items.js';
-import {clearSelection} from '../helper/selection.js';
+import {changeFillColor, clearFillGradient, DEFAULT_COLOR} from '../reducers/fill-style';
+import {changeMode} from '../reducers/modes';
+import {clearSelectedItems} from '../reducers/selected-items';
+import {clearSelection} from '../helper/selection';
 
-import BrushModeComponent from '../components/brush-mode/brush-mode.jsx';
+import BrushModeComponent from '../components/brush-mode/brush-mode';
 
 interface BrushModeProps {
     brushModeState?: {
@@ -20,8 +20,8 @@ interface BrushModeProps {
     clearGradient: () => void;
     clearSelectedItems: () => void;
     colorState: {
-        fillColor: any; // TODO: ColorStyleProptype
-        strokeColor: any; // TODO: ColorStyleProptype
+        fillColor: ColorStyleType;
+        strokeColor: ColorStyleType;
         strokeWidth: number;
     };
     handleMouseDown: () => void;

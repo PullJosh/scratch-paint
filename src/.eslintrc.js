@@ -8,7 +8,6 @@ module.exports = {
     },
     rules: {
         // BEGIN: these caused trouble after upgrading eslint-plugin-react from 7.20.3 to 7.33.2
-        'react/forbid-prop-types': 'off',
         'react/no-unknown-property': 'off',
         // END: these caused trouble after upgrading eslint-plugin-react from 7.20.3 to 7.33.2
         'import/no-mutable-exports': 'error',

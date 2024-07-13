@@ -2,16 +2,16 @@ import paper from '@scratch/paper';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes.js';
+import Modes from '../lib/modes';
 
-import {clearFillGradient} from '../reducers/fill-style.js';
-import {changeMode} from '../reducers/modes.js';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
-import {setCursor} from '../reducers/cursor.js';
+import {clearFillGradient} from '../reducers/fill-style';
+import {changeMode} from '../reducers/modes';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
+import {setCursor} from '../reducers/cursor';
 
-import {getSelectedLeafItems} from '../helper/selection.js';
-import BitSelectTool from '../helper/bit-tools/select-tool.js';
-import SelectModeComponent from '../components/bit-select-mode/bit-select-mode.jsx';
+import {getSelectedLeafItems} from '../helper/selection';
+import BitSelectTool from '../helper/bit-tools/select-tool';
+import SelectModeComponent from '../components/bit-select-mode/bit-select-mode';
 
 interface BitSelectModeProps {
     clearGradient: () => void;

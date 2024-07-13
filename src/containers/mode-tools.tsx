@@ -3,9 +3,9 @@ import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 
-import CopyPasteHOC from '../hocs/copy-paste-hoc.jsx';
+import CopyPasteHOC from '../hocs/copy-paste-hoc';
 import ModeToolsComponent from '../components/mode-tools/mode-tools';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
 import {
     deleteSelection,
     getSelectedLeafItems,
@@ -13,12 +13,12 @@ import {
     getAllRootItems,
     selectAllItems,
     selectAllSegments
-} from '../helper/selection.js';
-import {HANDLE_RATIO, ensureClockwise} from '../helper/math.js';
-import {getRaster} from '../helper/layer.js';
-import {flipBitmapHorizontal, flipBitmapVertical, selectAllBitmap} from '../helper/bitmap.js';
-import Formats, {isBitmap} from '../lib/format.js';
-import Modes from '../lib/modes.js';
+} from '../helper/selection';
+import {HANDLE_RATIO, ensureClockwise} from '../helper/math';
+import {getRaster} from '../helper/layer';
+import {flipBitmapHorizontal, flipBitmapVertical, selectAllBitmap} from '../helper/bitmap';
+import Formats, {isBitmap} from '../lib/format';
+import Modes from '../lib/modes';
 
 interface ModeToolsProps {
     clearSelectedItems: () => void;

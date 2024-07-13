@@ -2,16 +2,16 @@ import paper from '@scratch/paper';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes.js';
+import Modes from '../lib/modes';
 
-import {changeMode} from '../reducers/modes.js';
-import {clearHoveredItem, setHoveredItem} from '../reducers/hover.js';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
-import {setCursor} from '../reducers/cursor.js';
+import {changeMode} from '../reducers/modes';
+import {clearHoveredItem, setHoveredItem} from '../reducers/hover';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
+import {setCursor} from '../reducers/cursor';
 
-import {getSelectedLeafItems} from '../helper/selection.js';
-import SelectTool from '../helper/selection-tools/select-tool.js';
-import SelectModeComponent from '../components/select-mode/select-mode.jsx';
+import {getSelectedLeafItems} from '../helper/selection';
+import SelectTool from '../helper/selection-tools/select-tool';
+import SelectModeComponent from '../components/select-mode/select-mode';
 
 interface SelectModeProps {
     clearHoveredItem: () => void;

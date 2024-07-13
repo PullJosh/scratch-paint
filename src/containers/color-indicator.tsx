@@ -3,17 +3,17 @@ import bindAll from 'lodash.bindall';
 import parseColor from 'parse-color';
 import {injectIntl, intlShape} from 'react-intl';
 
-import {getSelectedLeafItems} from '../helper/selection.js';
-import Formats, {isBitmap} from '../lib/format.js';
-import GradientTypes from '../lib/gradient-types.js';
+import {getSelectedLeafItems} from '../helper/selection';
+import Formats, {isBitmap} from '../lib/format';
+import GradientTypes from '../lib/gradient-types';
 
-import ColorIndicatorComponent from '../components/color-indicator.jsx';
+import ColorIndicatorComponent from '../components/color-indicator';
 import {applyColorToSelection,
     applyGradientTypeToSelection,
     applyStrokeWidthToSelection,
     generateSecondaryColor,
     swapColorsInSelection,
-    MIXED} from '../helper/style-path.js';
+    MIXED} from '../helper/style-path';
 
 const makeColorIndicator = (label, isStroke: boolean) => {
     interface ColorIndicatorProps {

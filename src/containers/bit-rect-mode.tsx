@@ -2,22 +2,22 @@ import paper from '@scratch/paper';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes.js';
-import ColorStyleProptype from '../lib/color-style-proptype.js';
-import {MIXED} from '../helper/style-path.js';
+import Modes from '../lib/modes';
+import ColorStyleType from '../lib/color-style-type';
+import {MIXED} from '../helper/style-path';
 
-import {changeFillColor, DEFAULT_COLOR} from '../reducers/fill-style.js';
-import {changeMode} from '../reducers/modes.js';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
-import {setCursor} from '../reducers/cursor.js';
+import {changeFillColor, DEFAULT_COLOR} from '../reducers/fill-style';
+import {changeMode} from '../reducers/modes';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
+import {setCursor} from '../reducers/cursor';
 
-import {clearSelection, getSelectedLeafItems} from '../helper/selection.js';
-import RectTool from '../helper/bit-tools/rect-tool.js';
-import RectModeComponent from '../components/bit-rect-mode/bit-rect-mode.jsx';
+import {clearSelection, getSelectedLeafItems} from '../helper/selection';
+import RectTool from '../helper/bit-tools/rect-tool';
+import RectModeComponent from '../components/bit-rect-mode/bit-rect-mode';
 
 interface BitRectModeProps {
     clearSelectedItems: () => void;
-    color: any; // TODO: This used to be `ColorStyleProptype`
+    color: ColorStyleType;
     filled?: boolean;
     handleMouseDown: () => void;
     isRectModeActive: boolean;

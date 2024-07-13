@@ -29,8 +29,7 @@
     "lodash.bindall": "^4.4.0",
     "lodash.omit": "^4.5.0",
     "minilog": "^3.1.0",
-    "parse-color": "^1.0.0",
-    "prop-types": "^15.5.10"
+    "parse-color": "^1.0.0"
   },
   "peerDependencies": {
     "react": "^16",
@@ -40,7 +39,6 @@
     "react-popover": "^0.5",
     "react-redux": "^5",
     "react-responsive": "^5",
-    "react-style-proptype": "^3",
     "react-tooltip": "^4",
     "redux": "^3",
     "scratch-render-fonts": "^1.0.0"
@@ -54,12 +52,14 @@
     "@babel/preset-typescript": "^7.24.7",
     "@commitlint/cli": "17.8.1",
     "@commitlint/config-conventional": "17.8.1",
+    "@types/enzyme": "^3.10.18",
+    "@types/jest": "^29.5.12",
     "@types/keymirror": "^0.1.4",
     "@types/lodash.bindall": "^4.4.9",
+    "@types/lodash.omit": "^4.5.9",
     "@types/parse-color": "^1.0.3",
-    "@types/prop-types": "^15.7.12",
     "@types/react": "^18.3.3",
-    "@types/react-intl": "^3.0.0",
+    "@types/react-intl": "^2.3.18",
     "@types/react-popover": "^0.5.8",
     "@types/react-redux": "^7.1.33",
     "autoprefixer": "9.8.8",
@@ -95,7 +95,6 @@
     "react-popover": "0.5.10",
     "react-redux": "5.1.2",
     "react-responsive": "5.0.0",
-    "react-style-proptype": "3.2.2",
     "react-test-renderer": "16.14.0",
     "react-tooltip": "4.5.1",
     "redux": "3.7.2",

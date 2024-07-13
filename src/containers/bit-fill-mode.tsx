@@ -4,7 +4,7 @@ import bindAll from 'lodash.bindall';
 import Modes from '../lib/modes';
 import GradientTypes from '../lib/gradient-types';
 
-import FillModeComponent from '../components/bit-fill-mode/bit-fill-mode.jsx';
+import FillModeComponent from '../components/bit-fill-mode/bit-fill-mode';
 
 import {changeFillColor, changeFillColor2, DEFAULT_COLOR} from '../reducers/fill-style';
 import {changeMode} from '../reducers/modes';

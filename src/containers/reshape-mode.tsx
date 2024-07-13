@@ -1,15 +1,15 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes.js';
+import Modes from '../lib/modes';
 
-import {changeMode} from '../reducers/modes.js';
-import {clearHoveredItem, setHoveredItem} from '../reducers/hover.js';
-import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items.js';
-import {getSelectedLeafItems} from '../helper/selection.js';
+import {changeMode} from '../reducers/modes';
+import {clearHoveredItem, setHoveredItem} from '../reducers/hover';
+import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
+import {getSelectedLeafItems} from '../helper/selection';
 
-import ReshapeTool from '../helper/selection-tools/reshape-tool.js';
-import ReshapeModeComponent from '../components/reshape-mode/reshape-mode.jsx';
+import ReshapeTool from '../helper/selection-tools/reshape-tool';
+import ReshapeModeComponent from '../components/reshape-mode/reshape-mode';
 
 interface ReshapeModeProps {
     clearHoveredItem: () => void;

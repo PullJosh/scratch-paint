@@ -1,19 +1,19 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Modes from '../lib/modes.js';
-import GradientTypes from '../lib/gradient-types.js';
-import FillTool from '../helper/tools/fill-tool.js';
-import {generateSecondaryColor, MIXED} from '../helper/style-path.js';
+import Modes from '../lib/modes';
+import GradientTypes from '../lib/gradient-types';
+import FillTool from '../helper/tools/fill-tool';
+import {generateSecondaryColor, MIXED} from '../helper/style-path';
 
-import {changeFillColor, changeFillColor2, DEFAULT_COLOR} from '../reducers/fill-style.js';
-import {changeMode} from '../reducers/modes.js';
-import {clearSelectedItems} from '../reducers/selected-items.js';
-import {clearSelection} from '../helper/selection.js';
-import {clearHoveredItem, setHoveredItem} from '../reducers/hover.js';
-import {changeGradientType} from '../reducers/fill-mode-gradient-type.js';
+import {changeFillColor, changeFillColor2, DEFAULT_COLOR} from '../reducers/fill-style';
+import {changeMode} from '../reducers/modes';
+import {clearSelectedItems} from '../reducers/selected-items';
+import {clearSelection} from '../helper/selection';
+import {clearHoveredItem, setHoveredItem} from '../reducers/hover';
+import {changeGradientType} from '../reducers/fill-mode-gradient-type';
 
-import FillModeComponent from '../components/fill-mode/fill-mode.jsx';
+import FillModeComponent from '../components/fill-mode/fill-mode';
 
 interface FillModeProps {
     changeGradientType: (gradientType: keyof typeof GradientTypes) => void;

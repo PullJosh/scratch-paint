@@ -3,12 +3,12 @@ import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 import React from 'react';
 
-import FontDropdownComponent from '../components/font-dropdown/font-dropdown.jsx';
-import Fonts from '../lib/fonts.js';
-import {changeFont} from '../reducers/font.js';
-import {getSelectedLeafItems} from '../helper/selection.js';
+import FontDropdownComponent from '../components/font-dropdown/font-dropdown';
+import Fonts from '../lib/fonts';
+import {changeFont} from '../reducers/font';
+import {getSelectedLeafItems} from '../helper/selection';
 import styles from '../components/font-dropdown/font-dropdown.css';
-import Dropdown from '../components/dropdown/dropdown.jsx';
+import Dropdown from '../components/dropdown/dropdown';
 
 interface FontDropdownProps {
     changeFont: (font: string) => void;
