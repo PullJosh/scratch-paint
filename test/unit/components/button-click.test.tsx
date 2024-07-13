@@ -1,17 +1,24 @@
+/**
+ * @jest-environment jsdom
+ */
+
 /* eslint-env jest */
+
 import React from 'react';
-import {shallow} from 'enzyme';
+import {render, screen} from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Button from '../../../src/components/button/button';
 
 describe('Button', () => {
-    test('triggers callback when clicked', () => {
+    test('triggers callback when clicked', async () => {
         const onClick = jest.fn();
-        const componentShallowWrapper = shallow(
+        render(
             <Button onClick={onClick}>
                 {'Button'}
             </Button>
         );
-        componentShallowWrapper.simulate('click');
+        const user = userEvent.setup();
+        await user.click(screen.getByRole('button'));
         expect(onClick).toHaveBeenCalled();
     });
 });
