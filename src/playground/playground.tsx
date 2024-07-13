@@ -1,11 +1,11 @@
 import bindAll from 'lodash.bindall';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PaintEditor from '../index.ts';
+import PaintEditor from '../index';
 import {Provider} from 'react-redux';
 import {createStore} from 'redux';
 import reducer from './reducers/combine-reducers';
-import {intlInitialState, IntlProvider} from './reducers/intl.js';
+import {intlInitialState, IntlProvider} from './reducers/intl';
 import styles from './playground.css';
 // scratch-render-fonts is a playground-only dep. Fonts are expected to be imported
 // as a peer dependency, otherwise there will be two copies of them.
@@ -184,7 +184,7 @@ class Playground extends React.Component {
 }
 ReactDOM.render((
     <Provider store={store}>
-        <IntlProvider>
+        <IntlProvider textComponent="span">
             <Playground />
         </IntlProvider>
     </Provider>
