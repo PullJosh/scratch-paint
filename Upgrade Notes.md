@@ -15,8 +15,10 @@
 
 **Goal:** Upgrade from React 16 to 18.
 
-Prerequisites before upgrading to React 17:
+Prerequisites before upgrading React:
 - [x] `react-test-renderer` is installed but unused. It can be removed to allow upgrading React.
 - [x] Enzyme, the testing library, does not support React 17+. However, it is used *very* little and should be easily replaceable. (Perhaps using React Testing Library.)
   - [x] Install `@testing-library/react` version 12 first because it is compatible with React 16. (Then upgrade it later.)
-- [ ] We need to upgrade react-intl. The current version, 2.9.0, does not support React 17+. But the latest version supports both 16.6+ and 17 and 18. So we can upgrade that first while still on React 16.
+- [x] Upgrade `react-intl`. The current version, 2.9.0, does not support React 17+. But the latest version supports both 16.6+ and 17 and 18. So we can upgrade that first while still on React 16.
+- [ ] Upgrade `react-redux`. The latest version supports React 18+ and Redux 5+.
+  - [ ] Upgrade to Redux v5 first.
