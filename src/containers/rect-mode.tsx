@@ -28,8 +28,8 @@ interface RectModeProps {
     };
     handleMouseDown: () => void;
     isRectModeActive: boolean;
-    onChangeFillColor: (fillColor: any) => void; // TODO: any
-    onChangeStrokeColor: (strokeColor: any) => void; // TODO: any
+    onChangeFillColor: (fillColor: string | null) => void;
+    onChangeStrokeColor: (strokeColor: string | null) => void;
     onUpdateImage: () => void;
     selectedItems?: paper.Item[];
     setCursor: (cursorString: string) => void;

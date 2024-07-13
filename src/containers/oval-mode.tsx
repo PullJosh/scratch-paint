@@ -28,8 +28,8 @@ interface OvalModeProps {
     };
     handleMouseDown: () => void;
     isOvalModeActive: boolean;
-    onChangeFillColor: (fillColor: any) => void; // TODO: any
-    onChangeStrokeColor: (strokeColor: any) => void; // TODO: any
+    onChangeFillColor: (fillColor: string | null) => void;
+    onChangeStrokeColor: (strokeColor: string | null) => void;
     onUpdateImage: () => void;
     selectedItems?: paper.Item[];
     setCursor: (cursorString: string) => void;

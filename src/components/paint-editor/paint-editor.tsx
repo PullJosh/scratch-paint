@@ -22,7 +22,7 @@ import FillColorIndicatorComponent from '../../containers/fill-color-indicator';
 import FillMode from '../../containers/fill-mode';
 import InputGroup from '../input-group/input-group';
 import LineMode from '../../containers/line-mode';
-import Loupe from '../loupe/loupe';
+import Loupe, { LoupeComponentProps } from '../loupe/loupe';
 import FixedToolsContainer from '../../containers/fixed-tools';
 import ModeToolsContainer from '../../containers/mode-tools';
 import OvalMode from '../../containers/oval-mode';
@@ -58,7 +58,7 @@ interface PaintEditorComponentProps {
     canRedo: () => boolean;
     canUndo: () => boolean;
     canvas?: Element;
-    colorInfo?: any; // TODO: This used to be Loupe.propTypes.colorInfo
+    colorInfo?: LoupeComponentProps["colorInfo"];
     format?: keyof typeof Formats;
     image?: string | HTMLImageElement;
     imageFormat?: string;

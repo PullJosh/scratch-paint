@@ -34,8 +34,8 @@ interface TextModeProps {
     handleChangeModeText: () => void;
     isBitmap?: boolean;
     isTextModeActive: boolean;
-    onChangeFillColor: (fillColor: any) => void; // TODO: any
-    onChangeStrokeColor: (strokeColor: any) => void; // TODO: any
+    onChangeFillColor: (fillColor: string | null) => void;
+    onChangeStrokeColor: (strokeColor: string | null) => void;
     onUpdateImage: () => void;
     rtl?: boolean;
     selectedItems?: paper.Item[];

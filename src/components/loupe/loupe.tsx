@@ -7,7 +7,7 @@ import {LOUPE_RADIUS, ZOOM_SCALE} from '../../helper/tools/eye-dropper';
 
 import styles from './loupe.css';
 
-interface LoupeComponentProps {
+export interface LoupeComponentProps {
     colorInfo?: {
         color: Uint8ClampedArray; // this is the [r,g,b,a] array
         x: number;

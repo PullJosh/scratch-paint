@@ -1,7 +1,7 @@
 import React from 'react';
 import bindAll from 'lodash.bindall';
 import parseColor from 'parse-color';
-import {injectIntl, intlShape} from 'react-intl';
+import {injectIntl, InjectedIntl} from 'react-intl';
 
 import {getSelectedLeafItems} from '../helper/selection';
 import Formats, {isBitmap} from '../lib/format';
@@ -25,7 +25,7 @@ const makeColorIndicator = (label, isStroke: boolean) => {
         fillBitmapShapes: boolean;
         format?: keyof typeof Formats;
         gradientType: keyof typeof GradientTypes;
-        intl: any; // TODO: intlShape
+        intl: InjectedIntl;
         isEyeDropping: boolean;
         onChangeColorIndex: (index: number) => void;
         onChangeColor: (color: string, index: number) => void;
