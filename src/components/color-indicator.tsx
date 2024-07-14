@@ -1,5 +1,5 @@
 import React from 'react';
-import Popover from 'react-popover';
+import {CompatiblePopover} from './compatible-popover/compatible-popover';
 
 import ColorButton from './color-button/color-button';
 import ColorPicker from '../containers/color-picker';
@@ -17,12 +17,12 @@ interface ColorIndicatorComponentProps {
     gradientType: keyof typeof GradientTypes;
     label: string;
     onChangeColor: (color: string) => void;
-    onChangeGradientType: (gradientType: keyof typeof GradientTypes) => void;
+    onChangeGradientType?: (gradientType: keyof typeof GradientTypes) => void;
     onCloseColor: () => void;
-    onOpenColor: () => void;
+    onOpenColor?: () => void;
     onSwap: () => void;
     outline: boolean;
-    shouldShowGradientTools: boolean;
+    shouldShowGradientTools?: boolean;
 }
 
 const ColorIndicatorComponent = (props: ColorIndicatorComponentProps) => (
@@ -30,7 +30,7 @@ const ColorIndicatorComponent = (props: ColorIndicatorComponentProps) => (
         className={props.className}
         disabled={props.disabled}
     >
-        <Popover
+        <CompatiblePopover
             body={
                 <ColorPicker
                     color={props.color}
@@ -43,7 +43,6 @@ const ColorIndicatorComponent = (props: ColorIndicatorComponentProps) => (
                 />
             }
             isOpen={props.colorModalVisible}
-            preferPlace="below"
             onOuterAction={props.onCloseColor}
         >
             <Label text={props.label}>
@@ -55,7 +54,7 @@ const ColorIndicatorComponent = (props: ColorIndicatorComponentProps) => (
                     outline={props.outline}
                 />
             </Label>
-        </Popover>
+        </CompatiblePopover>
     </InputGroup>
 );
 

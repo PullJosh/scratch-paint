@@ -1,6 +1,6 @@
 import bindAll from 'lodash.bindall';
 import classNames from 'classnames';
-import Popover from 'react-popover';
+import {CompatiblePopover} from '../compatible-popover/compatible-popover';
 import React from 'react';
 
 import styles from './dropdown.css';
@@ -12,7 +12,7 @@ interface DropdownProps {
     className?: string;
     onOpen?: () => void;
     onOuterAction?: () => void;
-    popoverContent: React.ReactNode;
+    popoverContent: React.ReactElement;
 }
 
 interface DropdownState {
@@ -50,12 +50,13 @@ class Dropdown extends React.Component<DropdownProps, DropdownState> {
     }
     render () {
         return (
-            <Popover
+            <CompatiblePopover
                 body={this.props.popoverContent}
                 isOpen={this.state.isOpen}
-                preferPlace="below"
                 onOuterAction={this.props.onOuterAction ?
                     this.props.onOuterAction : this.handleClosePopover}
+                animated={false}
+                arrow={false}
                 {...this.props}
             >
                 <div
@@ -74,7 +75,7 @@ class Dropdown extends React.Component<DropdownProps, DropdownState> {
                         src={dropdownIcon}
                     />
                 </div>
-            </Popover>
+            </CompatiblePopover>
         );
     }
 }

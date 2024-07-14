@@ -120,7 +120,6 @@ module.exports = [
             'react-popover': 'react-popover',
             'react-redux': 'react-redux',
             'react-responsive': 'react-responsive',
-            'react-tooltip': 'react-tooltip',
             'redux': 'redux'
         },
         entry: {
